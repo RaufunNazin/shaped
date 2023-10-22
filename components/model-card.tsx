@@ -1,6 +1,6 @@
 import React from "react";
 
-interface CardProps {
+interface ModelCardProps {
   id: number;
   title: string;
   icon: React.ReactNode;
@@ -8,7 +8,7 @@ interface CardProps {
   time: string;
 }
 
-const Card = ({ id, title, icon, subtitle, time }: CardProps) => {
+const ModelCard = ({ id, title, icon, subtitle, time }: ModelCardProps) => {
   return (
     <div className="border rounded-2xl p-4 flex flex-col gap-y-4">
       <div className="text-blue-400 text-3xl pl-1">{icon}</div>
@@ -21,4 +21,4 @@ const Card = ({ id, title, icon, subtitle, time }: CardProps) => {
   );
 };
 
-export default Card;
+export default ModelCard;

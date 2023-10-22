@@ -17,15 +17,18 @@ export function UserAttrubuteTable({ userAttributes, error }: any) {
         <div />
       ) : (
         <div className="w-full">
+          <div className="my-2 text-black bg-white font-bold">
+            User features
+          </div>
           <DashboardTableWrapper className="max-w-full overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr>
                   <DashboardTableHeader className="w-[25%] bg-white p-4 text-sm font-bold normal-case text-black">
-                    Attribute
+                    attribute
                   </DashboardTableHeader>
                   <DashboardTableHeader className="w-[25%] bg-white p-4 text-sm font-bold normal-case text-black">
-                    Value
+                    value
                   </DashboardTableHeader>
                 </tr>
               </thead>

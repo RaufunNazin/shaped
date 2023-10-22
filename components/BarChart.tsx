@@ -20,7 +20,7 @@ ChartJS.register(
   Legend
 );
 
-interface VerticalBarProps {
+interface BarProps {
   data: any;
   indexAxis: "x" | "y" | undefined;
   height?: string;
@@ -50,7 +50,7 @@ const VerticalBarChart = ({
   gridY,
   borderX,
   borderY,
-}: VerticalBarProps) => {
+}: BarProps) => {
   return (
     <div
       style={{
