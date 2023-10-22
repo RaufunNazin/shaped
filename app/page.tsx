@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +14,8 @@ import Card from "@/components/Card";
 import { GoDatabase } from "react-icons/go";
 import { BsBox } from "react-icons/bs";
 import { CiRepeat, CiFilter } from "react-icons/ci";
+import { Selector, SelectorLabeled } from "@/components/selector";
+import { UserAttrubuteTable } from "@/components/user-attribute-table";
 
 ChartJS.register(
   CategoryScale,
@@ -24,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-const page = () => {
+const Page = () => {
   const horizontalBarData = {
     labels: ["genre", "age", "release_date", "director", "length"],
     datasets: [
@@ -116,8 +118,39 @@ const page = () => {
     },
   ];
 
+  const [label, setlabel] = useState("select");
+
   return (
     <div>
+      <div className="flex gap-x-4 mt-5 px-5">
+        <Selector
+          placeholder={label}
+          items={["1", "2", "3"]}
+          onValueChange={(value: string) => {
+            setlabel(value);
+          }}
+        />
+        <SelectorLabeled
+          label="Number"
+          placeholder={label}
+          items={["1", "2", "3"]}
+          onValueChange={(value: string) => {
+            setlabel(value);
+          }}
+        />
+      </div>
+      <div className="px-5">
+        <UserAttrubuteTable
+          userAttributes={{
+            user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
+            user_created_at: "2023-06-30 00:25:09",
+            age: 34,
+            gender: "male",
+            occupation: "engineer",
+            zip: 94102
+          }}
+        />
+      </div>
       <div className="px-5">
         <h2 className="text-left my-3 font-bold">Horizontal Bar Chart</h2>
         <div className="mx-auto border p-5 rounded-xl">
@@ -195,4 +228,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
