@@ -87,7 +87,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                       key={`model_${index}`}
                       className="cursor-pointer hover:bg-gray-50"
                     >
-                      <DashboardTableCell className="w-[20%]">
+                      <DashboardTableCell className="w-[20%] text-gray-500">
                         {item[label1] == null ? (
                           "NULL"
                         ) : item[label1].toString().length < 100 ? (
@@ -96,7 +96,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                           <DescriptionModal description={item[label1]} />
                         )}
                       </DashboardTableCell>
-                      <DashboardTableCell className="w-[20%]">
+                      <DashboardTableCell className="w-[20%] text-gray-500">
                         {item[label2] == null ? (
                           "NULL"
                         ) : item[label2].toString().length < 100 ? (
@@ -105,7 +105,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                           <DescriptionModal description={item[label2]} />
                         )}
                       </DashboardTableCell>
-                      <DashboardTableCell className="w-[20%]">
+                      <DashboardTableCell className="w-[20%] text-gray-500">
                         {item["label"] == null ? (
                           "NULL"
                         ) : item["label"].toString().length < 100 ? (
@@ -114,7 +114,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                           <DescriptionModal description={item["label"]} />
                         )}
                       </DashboardTableCell>
-                      <DashboardTableCell className="w-[20%]">
+                      <DashboardTableCell className="w-[20%] text-gray-500">
                         {item["timestamp"] == null ? (
                           "NULL"
                         ) : item["timestamp"].toString().length < 100 ? (
@@ -132,8 +132,8 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
 
           <div className="flex flex-row justify-between pb-6 pt-8 ">
             <div className="text-sm">
-              Showing {firstIndex + 1} to {lastIndex} of{" "}
-              {userInteractions.length} interactions
+              Showing {firstIndex + 1}-{lastIndex} of {userInteractions.length}{" "}
+              interactions
             </div>
             <div className="flex flex-row space-x-4">
               <Button

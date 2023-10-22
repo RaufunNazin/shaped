@@ -153,7 +153,7 @@ const Page = () => {
             onValueChange={(value: string) => {
               setUserId(value);
             }}
-            className="border-2 rounded-r-xl p-2 w-[400px]"
+            className="border-2 rounded-r-xl p-2 w-[450px]"
           />
         ) : user === "Cold-start user" ? (
           <Selector
@@ -166,10 +166,10 @@ const Page = () => {
             onValueChange={(value: string) => {
               setUserId(value);
             }}
-            className="border-2 rounded-r-xl p-2 w-[400px]"
+            className="border-2 rounded-r-xl p-2 w-[450px]"
           />
         ) : user === "Random user" ? (
-          <div className="flex items-center gap-x-4 border-2 w-[400px] p-2 rounded-r-xl">
+          <div className="flex justify-between items-center gap-x-4 border-2 w-[450px] p-2 rounded-r-xl">
             <div>{randomUser}</div>
             <button
               className="text-gray-500 font-medium text-sm"
@@ -181,7 +181,7 @@ const Page = () => {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-x-4 border-2 p-2 w-[400px] rounded-r-xl">
+          <div className="flex items-center gap-x-4 border-2 p-2 w-[450px] rounded-r-xl">
             <input className="outline-0" />
           </div>
         )}
@@ -194,128 +194,128 @@ const Page = () => {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "317fd37e-61fc-4fd9-8a79-aefd80e2ff6f",
                 timestamp: "2023-10-07 17:50:06",
-                label: 0,
+                label: "Watched",
                 title: "OCTOBER IS BREAST CANCER AWARENESS MONTH",
-                genre: "VIDEO",
+                genre: "Action, Drama",
                 items_user_id: "a951123f-4aec-440b-a6e9-ad8681c11ddb",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "13c61570-65ba-4077-912e-bd358fbbe1a8",
                 timestamp: "2023-09-19 20:46:15",
-                label: 0,
+                label: "Skipped",
                 title: "Honkai impact Magical Girl Sirin Build guide",
-                genre: "VIDEO",
+                genre: "Comedy, Fantasy",
                 items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "8c6341db-688d-4632-94e5-7a126094250c",
                 timestamp: "2023-09-18 20:54:11",
-                label: 0,
+                label: "Watched",
                 title:
                   "Ahh he's drowning well I just bought this dress soo…😱😂✨💜🐰🫶🏽",
-                genre: "VIDEO",
+                genre: "Romance",
                 items_user_id: "133ac2be-d0b7-418e-bd9c-053a4a38a654",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "82b99381-f61e-4b4b-b3f8-b7c7b31eeb10",
                 timestamp: "2023-09-15 21:55:51",
-                label: 0,
+                label: "Skipped",
                 title: "Here's the mosquito 🦟 dance 😅💜✨🫶🏽",
-                genre: "VIDEO",
+                genre: "Horror, Mystery",
                 items_user_id: "133ac2be-d0b7-418e-bd9c-053a4a38a654",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "695a49d6-3772-425d-a728-17d7b9737aa2",
                 timestamp: "2023-09-15 02:58:10",
-                label: 0,
+                label: "Watched",
                 title: "",
-                genre: "VIDEO",
+                genre: "Action, Adventure",
                 items_user_id: "50b4b35a-de38-40a6-a0b9-4639659c0217",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "e63627c4-4078-46df-a9a8-2a0007a3ed4c",
                 timestamp: "2023-09-15 02:58:09",
-                label: 0,
+                label: "Skipped",
                 title: "I really need ideas 💡",
-                genre: "VIDEO",
+                genre: "Comedy, Drama",
                 items_user_id: "d2d3dd61-6430-4d94-aaf4-0b47997e6fb1",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "695a49d6-3772-425d-a728-17d7b9737aa2",
                 timestamp: "2023-09-15 02:58:08",
-                label: 0,
+                label: "Watched",
                 title: "",
-                genre: "VIDEO",
+                genre: "Action, Thriller",
                 items_user_id: "50b4b35a-de38-40a6-a0b9-4639659c0217",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "91391ea0-adb0-459a-a389-06059fabc152",
                 timestamp: "2023-09-15 02:58:05",
-                label: 0,
+                label: "Skipped",
                 title: "3 super Random GenShin Facts!",
-                genre: "VIDEO",
+                genre: "Fantasy, Sci-Fi",
                 items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "695a49d6-3772-425d-a728-17d7b9737aa2",
                 timestamp: "2023-09-15 02:58:04",
-                label: 0,
+                label: "Watched",
                 title: "",
-                genre: "VIDEO",
+                genre: "Action, Comedy",
                 items_user_id: "50b4b35a-de38-40a6-a0b9-4639659c0217",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "91391ea0-adb0-459a-a389-06059fabc152",
                 timestamp: "2023-09-15 02:58:04",
-                label: 0,
+                label: "Skipped",
                 title: "3 super Random GenShin Facts!",
-                genre: "VIDEO",
+                genre: "Adventure, Mystery",
                 items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "bbde0ce7-e769-4873-88dc-8926446c9a55",
                 timestamp: "2023-09-15 02:58:03",
-                label: 0,
+                label: "Watched",
                 title: "Duet this with me🤍",
-                genre: "VIDEO",
+                genre: "Musical, Romance",
                 items_user_id: "3499f20d-1347-4395-aedd-b3bed3f36527",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "91391ea0-adb0-459a-a389-06059fabc152",
                 timestamp: "2023-09-15 02:58:02",
-                label: 0,
+                label: "Skipped",
                 title: "3 super Random GenShin Facts!",
-                genre: "VIDEO",
+                genre: "Action, Sci-Fi",
                 items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "bbde0ce7-e769-4873-88dc-8926446c9a55",
                 timestamp: "2023-09-15 02:58:00",
-                label: 0,
+                label: "Watched",
                 title: "Duet this with me🤍",
-                genre: "VIDEO",
+                genre: "Musical, Drama",
                 items_user_id: "3499f20d-1347-4395-aedd-b3bed3f36527",
               },
               {
                 user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                 item_id: "f31cfca9-eb68-49bc-b53a-dbe915a880a1",
                 timestamp: "2023-09-05 23:19:43",
-                label: 0,
+                label: "Skipped",
                 title:
                   "Found this fun Shower gel at Lush shaped like an octopus. Had give it a new home. Look at JIGGLE.",
-                genre: "VIDEO",
+                genre: "Comedy",
                 items_user_id: "51552fd9-e7e5-4e11-b2de-461912bf9b09",
               },
             ]}
