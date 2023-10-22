@@ -123,33 +123,68 @@ const Page = () => {
     },
   ];
 
-  const [label, setlabel] = useState("select");
+  const [user, setUser] = useState("Power user");
+  const [userId, setUserId] = useState("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
   const [algorithm, setAlgorithm] = useState(true);
   const [diversity, setDiversity] = useState(10);
   const [exploration, setExploration] = useState(10);
-  const [Pagination, setPagination] = useState(true);
+  const [pagination, setPagination] = useState(true);
+  const [randomUser, setRandomUser] = useState("");
 
   return (
     <div>
-      <div className="flex gap-x-4 mt-5 px-5">
-        <DashboardShell>
-          <Selector
-            placeholder={label}
-            items={["1", "2", "3"]}
-            onValueChange={(value: string) => {
-              setlabel(value);
-            }}
-          />
-        </DashboardShell>
-
-        <SelectorLabeled
-          label="Number"
-          placeholder={label}
-          items={["1", "2", "3"]}
+      <div className="flex mt-5 px-5">
+        <Selector
+          placeholder={user}
+          items={["Power user", "Cold-start user", "Random user", "Input user"]}
           onValueChange={(value: string) => {
-            setlabel(value);
+            setUser(value);
           }}
+          className="border-2 border-r-0 rounded-l-xl p-2"
         />
+        {user === "Power user" ? (
+          <Selector
+            placeholder={userId}
+            items={[
+              "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
+              "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
+              "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
+            ]}
+            onValueChange={(value: string) => {
+              setUserId(value);
+            }}
+            className="border-2 rounded-r-xl p-2 w-[400px]"
+          />
+        ) : user === "Cold-start user" ? (
+          <Selector
+            placeholder={userId}
+            items={[
+              "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
+              "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
+              "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
+            ]}
+            onValueChange={(value: string) => {
+              setUserId(value);
+            }}
+            className="border-2 rounded-r-xl p-2 w-[400px]"
+          />
+        ) : user === "Random user" ? (
+          <div className="flex items-center gap-x-4 border-2 w-[400px] p-2 rounded-r-xl">
+            <div>{randomUser}</div>
+            <button
+              className="text-gray-500 font-medium text-sm"
+              onClick={() => {
+                setRandomUser("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
+              }}
+            >
+              Generate
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-x-4 border-2 p-2 w-[400px] rounded-r-xl">
+            <input className="outline-0" />
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-4 mt-5">
         <div className="px-5 col-span-3">
@@ -377,6 +412,7 @@ const Page = () => {
         algorithm={algorithm}
         diversity={diversity}
         exploration={exploration}
+        pagination={pagination}
         setDiversity={setDiversity}
         setExploration={setExploration}
         onAlgorithmChange={setAlgorithm}

@@ -6,6 +6,7 @@ interface ConfigurationCardProps {
   algorithm: boolean;
   diversity: number;
   exploration: number;
+  pagination: boolean;
   setDiversity: Dispatch<SetStateAction<number>>;
   setExploration: Dispatch<SetStateAction<number>>;
   onAlgorithmChange: Dispatch<SetStateAction<boolean>>;
@@ -18,6 +19,7 @@ const ConfigurationCard = ({
   algorithm,
   diversity,
   exploration,
+  pagination,
   setDiversity,
   setExploration,
   onAlgorithmChange,
@@ -37,7 +39,10 @@ const ConfigurationCard = ({
           >
             Toplist
           </div>
-          <DoubleSwitch onCheckedChange={(e) => onAlgorithmChange(e)} />
+          <DoubleSwitch
+            checked={algorithm}
+            onCheckedChange={(e) => onAlgorithmChange(e)}
+          />
           <div
             className={`text-sm font-medium ${
               algorithm ? "text-blue-600" : "text-gray-500"
@@ -110,7 +115,10 @@ const ConfigurationCard = ({
         <div className="text-xl font-bold">Other</div>
         <div className="flex gap-x-4 items-center">
           <div className="text-sm text-gray-500 font-medium">Pagination</div>
-          <Switch onCheckedChange={(e) => onPaginationChange(e)} />
+          <Switch
+            checked={pagination}
+            onCheckedChange={(e) => onPaginationChange(e)}
+          />
         </div>
       </div>
     </div>

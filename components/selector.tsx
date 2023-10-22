@@ -33,7 +33,7 @@ const Selector = ({
     <Select onValueChange={onValueChange} value={placeholder}>
       <SelectTrigger
         className={cn(
-          "select--trigger flex justify-between items-center gap-x-2 border-none px-1 drop-shadow-none outline-none",
+          "select--trigger flex justify-between items-center gap-x-2 px-1 drop-shadow-none outline-none",
           className
         )}
       >
