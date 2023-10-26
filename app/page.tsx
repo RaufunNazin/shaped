@@ -224,6 +224,7 @@ const Page = () => {
   const [exploration, setExploration] = useState(10);
   const [pagination, setPagination] = useState(true);
   const [randomUser, setRandomUser] = useState("");
+  const [dataFilter1, setDataFilter1] = useState("Last Month");
 
   return (
     <div>
@@ -453,10 +454,39 @@ const Page = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2">
         <div className="px-5">
-          <h2 className="text-left my-3 font-bold">Vertical Bar Chart 1</h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-left my-3 font-bold">Vertical Bar Chart 1</h2>
+            <div className="flex items-center gap-x-2">
+              <Selector
+                placeholder={"genre"}
+                items={[
+                  "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
+                  "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
+                  "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
+                ]}
+                onValueChange={(value: string) => {
+                  setUserId(value);
+                }}
+                className="p-2 shadow-md rounded-lg"
+              />
+              <Selector
+                placeholder={dataFilter1}
+                items={["Last Week", "Last Month"]}
+                onValueChange={(value: string) => {
+                  setDataFilter1(value);
+                }}
+                className="py-2 px-4 shadow-md rounded-lg"
+              />
+            </div>
+          </div>
+
           <div className="mx-auto border p-5 rounded-xl">
             <BarChart
-              data={verticalBarData1}
+              data={
+                dataFilter1 === "Last Week"
+                  ? verticalBarData1
+                  : verticalBarData2
+              }
               indexAxis="x"
               height={"400px"}
               width={"100%"}
