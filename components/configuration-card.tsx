@@ -10,13 +10,13 @@ import {
 import { Icons } from "./icons";
 
 interface ConfigurationCardProps {
-  algorithm: boolean;
+  algorithm: string;
   diversity: number;
   exploration: number;
   pagination: boolean;
   setDiversity: Dispatch<SetStateAction<number>>;
   setExploration: Dispatch<SetStateAction<number>>;
-  onAlgorithmChange: Dispatch<SetStateAction<boolean>>;
+  onAlgorithmChange: Dispatch<SetStateAction<string>>;
   onDiversityChange: (value: string) => void;
   onExplorationChange: (value: string) => void;
   onPaginationChange: Dispatch<SetStateAction<boolean>>;
@@ -39,25 +39,27 @@ const ConfigurationCard = ({
     <div className="grid grid-cols-1 md:grid-cols-3 p-5 gap-5">
       <div className="border rounded-2xl p-6 flex flex-col gap-y-4 h-[170px]">
         <div className="text-xl font-bold">Algorithm</div>
-        <div className="flex gap-x-4 items-center">
-          <div
-            className={`text-sm font-medium ${
-              !algorithm ? "text-blue-600" : "text-gray-500"
-            }`}
-          >
-            Toplist
-          </div>
-          <DoubleSwitch
-            checked={algorithm}
-            onCheckedChange={(e) => onAlgorithmChange(e)}
-          />
-          <div
-            className={`text-sm font-medium ${
-              algorithm ? "text-blue-600" : "text-gray-500"
-            }`}
+        <div className="flex gap-x-2 items-center">
+          <button
+            className={`${
+              algorithm === "Personalized"
+                ? "bg-[#6366f1] text-white"
+                : "bg-[#f1f5f9] text-gray-500"
+            } font-medium px-4 py-2 rounded-md`}
+            onClick={() => onAlgorithmChange("Personalized")}
           >
             Personalized
-          </div>
+          </button>
+          <button
+            className={`${
+              algorithm === "Popular"
+                ? "bg-[#6366f1] text-white"
+                : "bg-[#f1f5f9] text-gray-500"
+            } font-medium px-4 py-2 rounded-md`}
+            onClick={() => onAlgorithmChange("Popular")}
+          >
+            Popular
+          </button>
         </div>
       </div>
       <div className="border rounded-2xl p-6 flex flex-col gap-y-4 h-[170px]">
