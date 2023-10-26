@@ -21,6 +21,7 @@ import { DashboardShell } from "@/components/shell";
 import { UserInteractionsTable } from "@/components/user-interactions-table";
 import ConfigurationCard from "@/components/configuration-card";
 import { Switch } from "@/components/ui/switch";
+import { UserResultsTable } from "@/components/user-results-table";
 
 ChartJS.register(
   CategoryScale,
@@ -123,6 +124,99 @@ const Page = () => {
     },
   ];
 
+  const resultsData = [
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "Transformers: The Last Knight",
+      genre: ["Action", "Adventure", "Sci-Fi"],
+      score: 0.9837,
+      source: "Personalized",
+      shapley: 0.9837,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "The Dark Knight",
+      genre: ["Action", "Crime", "Drama"],
+      score: 0.9543,
+      source: "Recommended",
+      shapley: 0.9543,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "Inception",
+      genre: ["Action", "Adventure", "Sci-Fi"],
+      score: 0.9765,
+      source: "Popular",
+      shapley: 0.9765,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "Jurassic Park",
+      genre: ["Action", "Adventure", "Sci-Fi"],
+      score: 0.9268,
+      source: "Recommended",
+      shapley: 0.9268,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "The Shawshank Redemption",
+      genre: ["Drama"],
+      score: 0.9892,
+      source: "Personalized",
+      shapley: 0.9892,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "Pulp Fiction",
+      genre: ["Crime", "Drama"],
+      score: 0.9487,
+      source: "Popular",
+      shapley: 0.9487,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "Avatar",
+      genre: ["Action", "Adventure", "Fantasy"],
+      score: 0.9376,
+      source: "Personalized",
+      shapley: 0.9376,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "The Matrix",
+      genre: ["Action", "Sci-Fi"],
+      score: 0.9634,
+      source: "Recommended",
+      shapley: 0.9634,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "Forrest Gump",
+      genre: ["Drama", "Romance"],
+      score: 0.9912,
+      source: "Popular",
+      shapley: 0.9912,
+    },
+    {
+      Preview:
+        "https://cdn.mos.cms.futurecdn.net/dPo92zYeAz7Joxh7HWooJ3-1200-80.jpg",
+      title: "The Godfather",
+      genre: ["Crime", "Drama"],
+      score: 0.9789,
+      source: "Recommended",
+      shapley: 0.9789,
+    },
+  ];
+
   const [user, setUser] = useState("Power user");
   const [userId, setUserId] = useState("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
   const [algorithm, setAlgorithm] = useState(true);
@@ -185,6 +279,9 @@ const Page = () => {
             <input className="outline-0" />
           </div>
         )}
+      </div>
+      <div className="px-5">
+        <UserResultsTable resultsData={resultsData} />
       </div>
       <div className="grid grid-cols-4 mt-5">
         <div className="px-5 col-span-3">
