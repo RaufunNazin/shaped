@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Outline } from "./outline";
 import TitleInfo from "./title-info";
-import { TitledBarChart } from "./graphs/bar-chart";
+import { TitledBarChart } from "./graphs/new-bar-chart";
 import { MessageBox } from "./message-box";
 import { Selector } from "./selector";
 
 interface TrainTabBarChartSectionProps
   extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
-  data: number | null;
+  userActivity: number | null;
   userActivityFilter: string;
   setUserActivityFilter: (value: string) => void;
 }
 
 export function UserActivityBarChart({
   title,
-  data,
+  userActivity,
   userActivityFilter,
   setUserActivityFilter,
 }: TrainTabBarChartSectionProps) {
@@ -35,48 +35,48 @@ export function UserActivityBarChart({
       </div>
 
       <div>
-        {data == null ? (
-          <MessageBox title="No metrics yet"></MessageBox>
+        {userActivity == null ? (
+          <MessageBox title="No data yet"></MessageBox>
         ) : (
           <div className="w-full border rounded-lg">
             <TitledBarChart
               chartTitle={""}
               data={[
                 {
-                  name: "hi",
+                  name: "<10th",
                   value: 10,
                   alias: "<10th",
-                  color: data > 0 && data < 11 ? "#6366f1" : "#cbd5e1",
+                  color: userActivity > 0 && userActivity < 11 ? "#6366f1" : "#cbd5e1",
                 },
                 {
-                  name: "hi2",
+                  name: "20th",
                   value: 20,
                   alias: "20th",
-                  color: data > 10 && data < 21 ? "#6366f1" : "#cbd5e1",
+                  color: userActivity > 10 && userActivity < 21 ? "#6366f1" : "#cbd5e1",
                 },
                 {
-                  name: "hi3",
+                  name: "40th",
                   value: 40,
                   alias: "40th",
-                  color: data > 20 && data < 41 ? "#6366f1" : "#cbd5e1",
+                  color: userActivity > 20 && userActivity < 41 ? "#6366f1" : "#cbd5e1",
                 },
                 {
-                  name: "hi4",
+                  name: "60th",
                   value: 60,
                   alias: "60th",
-                  color: data > 40 && data < 61 ? "#6366f1" : "#cbd5e1",
+                  color: userActivity > 40 && userActivity < 61 ? "#6366f1" : "#cbd5e1",
                 },
                 {
-                  name: "hi5",
+                  name: "80th",
                   value: 80,
                   alias: "80th",
-                  color: data > 60 && data < 81 ? "#6366f1" : "#cbd5e1",
+                  color: userActivity > 60 && userActivity < 81 ? "#6366f1" : "#cbd5e1",
                 },
                 {
-                  name: "hi6",
+                  name: ">90th",
                   value: 90,
                   alias: ">90th",
-                  color: data > 80 && data < 101 ? "#6366f1" : "#cbd5e1",
+                  color: userActivity > 80 && userActivity < 101 ? "#6366f1" : "#cbd5e1",
                 },
               ]}
             />

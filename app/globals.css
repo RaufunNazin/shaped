@@ -16,20 +16,36 @@ input[type="number"] {
 }
 
 .table-container {
-  height: 225px; /* Set the desired height for your table */
-  overflow-y: scroll; /* Enable vertical scrolling */
+  height: 265px; /* Set the desired height for your table */
+  overflow: hidden; /* Enable vertical scrolling */
+  padding-right: 6px;
+  transition: overflow 0.5s ease-in-out; /* Add a smooth transition effect for overflow */
+}
+
+.table-container:hover {
+  overflow: auto; /* Enable vertical scrolling */
   scrollbar-width: thin; /* Set the scrollbar width to thin */
   scrollbar-color: #888 #ccc; /* Define scrollbar colors */
+  padding-right: 0px;
+  /* padding-left: 6px; */
+  transition: overflow 0.5s ease-in-out; /* Add a smooth transition effect for overflow */
 }
 
 /* Custom styling for WebKit-based browsers */
 .table-container::-webkit-scrollbar {
   width: 6px; /* Set the width of the scrollbar */
+  height: 6px; /* Set the height of the scrollbar */
+}
+
+.table-container::-webkit-scrollbar:hover {
+  width: 6px; /* Set the width of the scrollbar */
+  height: 6px; /* Set the height of the scrollbar */
 }
 
 .table-container::-webkit-scrollbar-thumb {
   background-color: #888; /* Color of the thumb (the draggable part) */
   border-radius: 8px; /* Make the thumb rounded */
+  height: 6px; /* Set the height of the thumb */
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
@@ -39,4 +55,5 @@ input[type="number"] {
 .table-container::-webkit-scrollbar-track {
   background-color: #ccc; /* Color of the track (the background behind the thumb) */
   border-radius: 8px; /* Make the thumb rounded */
+  height: 6px; /* Set the height of the track */
 }

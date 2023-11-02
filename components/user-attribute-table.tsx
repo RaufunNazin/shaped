@@ -6,7 +6,7 @@ import {
   DashboardTableCell,
 } from "./dashboard-table";
 import DescriptionModal from "./description-modal";
-import React, { use } from "react";
+import React from "react";
 
 export function UserAttrubuteTable({ userAttributes, error }: any) {
   return (

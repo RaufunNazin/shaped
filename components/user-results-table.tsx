@@ -8,7 +8,7 @@ import {
 } from "./dashboard-table";
 import { MessageBox } from "./message-box";
 import DescriptionModal from "./description-modal";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 
 export function UserResultsTable({ resultsData, error }: any) {
