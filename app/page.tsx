@@ -22,6 +22,9 @@ import { UserInteractionsTable } from "@/components/user-interactions-table";
 import ConfigurationCard from "@/components/configuration-card";
 import { Switch } from "@/components/ui/switch";
 import { UserResultsTable } from "@/components/user-results-table";
+import { CustomBarChart, TitledBarChart } from "@/components/graphs/bar-chart";
+import { UserSessionsTable } from "@/components/user-sessions-table";
+import { UserActivityBarChart } from "@/components/user-activity-barchart";
 
 ChartJS.register(
   CategoryScale,
@@ -33,62 +36,301 @@ ChartJS.register(
 );
 
 const Page = () => {
-  const horizontalBarData = {
-    labels: ["genre", "age", "release_date", "director", "length"],
-    datasets: [
+  const data = {
+    userAttributes: {
+      user_id: "459907",
+      user_created_at: "2023-10-18 23:09:14",
+      user_country_on_create_id: "US",
+    },
+    userActivityPercentile: {
+      lastDay: 95,
+      lastWeek: 60,
+      lastMonth: 23,
+    },
+    itemFeatures: ["items_caption", "items_content_type", "items_user_id"],
+    eventFeatures: ["event_caption", "event_content_type", "event_user_id"],
+    recentSessions: [
       {
-        data: [
-          Math.random() * 40,
-          Math.random() * 40,
-          Math.random() * 40,
-          Math.random() * 40,
-          Math.random() * 40,
+        sessionStartTime: "2023-10-01 12:00:00",
+        sessionEndTime: "2023-10-02 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-8242348b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show  all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-82448b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your  something 😋😋🍄🦈",
+            items_content_type: "AUDIO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-8242328b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all  😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
         ],
-        backgroundColor: "#cbd5e1", // Bar color
       },
-    ],
-  };
-
-  const verticalBarData1 = {
-    labels: [
-      "Action",
-      "Drama",
-      "Comedy",
-      "Romance",
-      "Stand-up",
-      "Thriller",
-      "Horror",
-    ],
-    datasets: [
       {
-        data: [
-          Math.random() * 25,
-          Math.random() * 25,
-          Math.random() * 25,
-          Math.random() * 25,
-          Math.random() * 25,
-          Math.random() * 25,
-          Math.random() * 25,
+        sessionStartTime: "2023-10-02 12:00:00",
+        sessionEndTime: "2023-10-03 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to",
+            items_content_type: "AUDIO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
         ],
-        backgroundColor: "#cbd5e1", // Bar color
       },
-    ],
-  };
-
-  const verticalBarData2 = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
       {
-        data: [
-          Math.random() * 100,
-          Math.random() * 100,
-          Math.random() * 100,
-          Math.random() * 100,
-          Math.random() * 100,
-          Math.random() * 100,
-          Math.random() * 100,
+        sessionStartTime: "2023-10-03 12:00:00",
+        sessionEndTime: "2023-10-04 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
         ],
-        backgroundColor: "#cbd5e1", // Bar color
+      },
+      {
+        sessionStartTime: "2023-10-04 12:00:00",
+        sessionEndTime: "2023-10-05 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-05 12:00:00",
+        sessionEndTime: "2023-10-06 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "AUDIO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-06 12:00:00",
+        sessionEndTime: "2023-10-07 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-07 12:00:00",
+        sessionEndTime: "2023-10-08 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-08 12:00:00",
+        sessionEndTime: "2023-10-09 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-09 12:00:00",
+        sessionEndTime: "2023-10-10 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-10 12:00:00",
+        sessionEndTime: "2023-10-11 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-11 12:00:00",
+        sessionEndTime: "2023-10-12 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-12 12:00:00",
+        sessionEndTime: "2023-10-13 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-13 12:00:00",
+        sessionEndTime: "2023-10-14 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-14 12:00:00",
+        sessionEndTime: "2023-10-15 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-15 12:00:00",
+        sessionEndTime: "2023-10-16 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-17 12:00:00",
+        sessionEndTime: "2023-10-18 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
+      },
+      {
+        sessionStartTime: "2023-10-18 12:00:00",
+        sessionEndTime: "2023-10-19 12:00:00",
+        sessionEvents: [
+          {
+            user_id: "e6af1f94-78db-4c70-b03a-50ff484cb8ed",
+            item_id: "e5d085ce-880b-4586-828b-4a5d27c0fefe",
+            created_at: "2023-09-12 16:35:20",
+            label: 0,
+            items_caption: "I want to show your all something 😋😋🍄🦈",
+            items_content_type: "VIDEO",
+            items_user_id: "7989e2a2-65a1-43d9-9ed8-5e167f100657",
+          },
+        ],
       },
     ],
   };
@@ -226,6 +468,8 @@ const Page = () => {
   const [randomUser, setRandomUser] = useState("");
   const [dataFilter1, setDataFilter1] = useState("Last Month");
   const [dataFilter2, setDataFilter2] = useState("genre");
+  const [selectedSession, setSelectedSession] = useState("2023-10-01 12:00:00");
+  const [userActivityFilter, setUserActivityFilter] = useState("Last Week");
 
   return (
     <div>
@@ -285,141 +529,7 @@ const Page = () => {
       <div className="px-5">
         <UserResultsTable resultsData={resultsData} />
       </div>
-      <div className="grid grid-cols-4 mt-5">
-        <div className="px-5 col-span-3">
-          <UserInteractionsTable
-            userInteractions={[
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "317fd37e-61fc-4fd9-8a79-aefd80e2ff6f",
-                timestamp: "2023-10-07 17:50:06",
-                label: "Watched",
-                title: "OCTOBER IS BREAST CANCER AWARENESS MONTH",
-                genre: "Action, Drama",
-                items_user_id: "a951123f-4aec-440b-a6e9-ad8681c11ddb",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "13c61570-65ba-4077-912e-bd358fbbe1a8",
-                timestamp: "2023-09-19 20:46:15",
-                label: "Skipped",
-                title: "Honkai impact Magical Girl Sirin Build guide",
-                genre: "Comedy, Fantasy",
-                items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "8c6341db-688d-4632-94e5-7a126094250c",
-                timestamp: "2023-09-18 20:54:11",
-                label: "Watched",
-                title:
-                  "Ahh he's drowning well I just bought this dress soo…😱😂✨💜🐰🫶🏽",
-                genre: "Romance",
-                items_user_id: "133ac2be-d0b7-418e-bd9c-053a4a38a654",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "82b99381-f61e-4b4b-b3f8-b7c7b31eeb10",
-                timestamp: "2023-09-15 21:55:51",
-                label: "Skipped",
-                title: "Here's the mosquito 🦟 dance 😅💜✨🫶🏽",
-                genre: "Horror, Mystery",
-                items_user_id: "133ac2be-d0b7-418e-bd9c-053a4a38a654",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "695a49d6-3772-425d-a728-17d7b9737aa2",
-                timestamp: "2023-09-15 02:58:10",
-                label: "Watched",
-                title: "",
-                genre: "Action, Adventure",
-                items_user_id: "50b4b35a-de38-40a6-a0b9-4639659c0217",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "e63627c4-4078-46df-a9a8-2a0007a3ed4c",
-                timestamp: "2023-09-15 02:58:09",
-                label: "Skipped",
-                title: "I really need ideas 💡",
-                genre: "Comedy, Drama",
-                items_user_id: "d2d3dd61-6430-4d94-aaf4-0b47997e6fb1",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "695a49d6-3772-425d-a728-17d7b9737aa2",
-                timestamp: "2023-09-15 02:58:08",
-                label: "Watched",
-                title: "",
-                genre: "Action, Thriller",
-                items_user_id: "50b4b35a-de38-40a6-a0b9-4639659c0217",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "91391ea0-adb0-459a-a389-06059fabc152",
-                timestamp: "2023-09-15 02:58:05",
-                label: "Skipped",
-                title: "3 super Random GenShin Facts!",
-                genre: "Fantasy, Sci-Fi",
-                items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "695a49d6-3772-425d-a728-17d7b9737aa2",
-                timestamp: "2023-09-15 02:58:04",
-                label: "Watched",
-                title: "",
-                genre: "Action, Comedy",
-                items_user_id: "50b4b35a-de38-40a6-a0b9-4639659c0217",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "91391ea0-adb0-459a-a389-06059fabc152",
-                timestamp: "2023-09-15 02:58:04",
-                label: "Skipped",
-                title: "3 super Random GenShin Facts!",
-                genre: "Adventure, Mystery",
-                items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "bbde0ce7-e769-4873-88dc-8926446c9a55",
-                timestamp: "2023-09-15 02:58:03",
-                label: "Watched",
-                title: "Duet this with me🤍",
-                genre: "Musical, Romance",
-                items_user_id: "3499f20d-1347-4395-aedd-b3bed3f36527",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "91391ea0-adb0-459a-a389-06059fabc152",
-                timestamp: "2023-09-15 02:58:02",
-                label: "Skipped",
-                title: "3 super Random GenShin Facts!",
-                genre: "Action, Sci-Fi",
-                items_user_id: "5dfb073c-ad2c-4b62-bf7b-3111b8de37ac",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "bbde0ce7-e769-4873-88dc-8926446c9a55",
-                timestamp: "2023-09-15 02:58:00",
-                label: "Watched",
-                title: "Duet this with me🤍",
-                genre: "Musical, Drama",
-                items_user_id: "3499f20d-1347-4395-aedd-b3bed3f36527",
-              },
-              {
-                user_id: "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-                item_id: "f31cfca9-eb68-49bc-b53a-dbe915a880a1",
-                timestamp: "2023-09-05 23:19:43",
-                label: "Skipped",
-                title:
-                  "Found this fun Shower gel at Lush shaped like an octopus. Had give it a new home. Look at JIGGLE.",
-                genre: "Comedy",
-                items_user_id: "51552fd9-e7e5-4e11-b2de-461912bf9b09",
-              },
-            ]}
-          />
-        </div>
+      <div className="grid grid-cols-2">
         <div className="px-5">
           <UserAttrubuteTable
             userAttributes={{
@@ -432,28 +542,41 @@ const Page = () => {
             }}
           />
         </div>
-      </div>
-
-      <div className="px-5">
-        <h2 className="text-left my-3 font-bold">Horizontal Bar Chart</h2>
-        <div className="mx-auto border p-5 rounded-xl">
-          <BarChart
-            data={horizontalBarData}
-            indexAxis="y"
-            height={"400px"}
-            width={"100%"}
-            borderRadius={4}
-            responsive={true}
-            maintainAspectRatio={false}
-            legend={false}
-            gridX={false}
-            gridY={false}
-            borderX={false}
-            borderY={false}
+        <div className="px-5">
+          <UserActivityBarChart
+            title="User activity percentile"
+            data={
+              userActivityFilter === "Last Day"
+                ? data.userActivityPercentile.lastDay
+                : userActivityFilter === "Last Week"
+                ? data.userActivityPercentile.lastWeek
+                : data.userActivityPercentile.lastMonth
+            }
+            userActivityFilter={userActivityFilter}
+            setUserActivityFilter={setUserActivityFilter}
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2">
+
+      <div className="grid grid-cols-5 mt-5">
+        <div className="px-5">
+          <UserSessionsTable
+            recentSessions={data.recentSessions}
+            currentSession={selectedSession}
+            onSessionChange={setSelectedSession}
+          />
+        </div>
+        <div className="px-5 col-span-4">
+          <UserInteractionsTable
+            userInteractions={
+              data.recentSessions.find(
+                (session) => session.sessionStartTime === selectedSession
+              )?.sessionEvents
+            }
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-6">
         <div className="px-5">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-left my-3 font-bold">Vertical Bar Chart 1</h2>
@@ -464,7 +587,7 @@ const Page = () => {
                 onValueChange={(value: string) => {
                   setDataFilter2(value);
                 }}
-                className="p-2 shadow-md rounded-lg"
+                className="py-2 px-4 shadow-md rounded-lg border"
               />
               <Selector
                 placeholder={dataFilter1}
@@ -472,57 +595,9 @@ const Page = () => {
                 onValueChange={(value: string) => {
                   setDataFilter1(value);
                 }}
-                className="py-2 px-4 shadow-md rounded-lg"
+                className="py-2 px-4 shadow-md rounded-lg border"
               />
             </div>
-          </div>
-
-          <div className="mx-auto border p-5 rounded-xl">
-            <BarChart
-              data={verticalBarData1}
-              indexAxis="x"
-              height={"400px"}
-              width={"100%"}
-              borderRadius={4}
-              responsive={true}
-              maintainAspectRatio={false}
-              legend={false}
-              gridX={false}
-              gridY={false}
-              borderX={false}
-              borderY={false}
-            />
-          </div>
-        </div>
-        <div className="px-5">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-left my-3 font-bold">Vertical Bar Chart 2</h2>
-            <div className="flex items-center gap-x-2">
-              <Selector
-                placeholder={dataFilter1}
-                items={["Last Week", "Last Month"]}
-                onValueChange={(value: string) => {
-                  setDataFilter1(value);
-                }}
-                className="py-2 px-4 shadow-sm rounded-lg"
-              />
-            </div>
-          </div>
-          <div className="mx-auto border p-5 rounded-xl">
-            <BarChart
-              data={verticalBarData2}
-              indexAxis="x"
-              height={"400px"}
-              width={"100%"}
-              borderRadius={4}
-              responsive={true}
-              maintainAspectRatio={false}
-              legend={false}
-              gridX={false}
-              gridY={false}
-              borderX={false}
-              borderY={false}
-            />
           </div>
         </div>
       </div>

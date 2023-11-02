@@ -16,8 +16,8 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => setCurrentPage(1), [userInteractions]);
-  const [label1, setlabel1] = useState("title");
-  const [label2, setlabel2] = useState("genre");
+  const [label1, setlabel1] = useState("items_caption");
+  const [label2, setlabel2] = useState("items_content_type");
 
   const recordsPerPage = 5;
   const firstIndex = (currentPage - 1) * recordsPerPage;
@@ -56,7 +56,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                     <SelectorLabeled
                       label={label1}
                       placeholder={""}
-                      items={["title", "user_id", "item_id", "items_user_id"]}
+                      items={["items_caption", "user_id", "item_id", "items_user_id"]}
                       onValueChange={(value: string) => {
                         setlabel1(value);
                       }}
@@ -66,7 +66,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                     <SelectorLabeled
                       label={label2}
                       placeholder={""}
-                      items={["genre", "user_id", "item_id", "items_user_id"]}
+                      items={["items_content_type", "user_id", "item_id", "items_user_id"]}
                       onValueChange={(value: string) => {
                         setlabel2(value);
                       }}
@@ -80,7 +80,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                   </DashboardTableHeader>
                 </tr>
               </thead>
-              <tbody className="relative  divide-y divide-gray-200">
+              <tbody className="relative divide-y divide-gray-200">
                 {records.map((item: any, index: any) => {
                   return (
                     <tr
@@ -115,12 +115,12 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                         )}
                       </DashboardTableCell>
                       <DashboardTableCell className="w-[20%] text-gray-500">
-                        {item["timestamp"] == null ? (
+                        {item["created_at"] == null ? (
                           "NULL"
-                        ) : item["timestamp"].toString().length < 100 ? (
-                          item["timestamp"]
+                        ) : item["created_at"].toString().length < 100 ? (
+                          item["created_at"]
                         ) : (
-                          <DescriptionModal description={item["timestamp"]} />
+                          <DescriptionModal description={item["created_at"]} />
                         )}
                       </DashboardTableCell>
                     </tr>
