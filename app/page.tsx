@@ -557,7 +557,10 @@ const Page = () => {
           />
         </div>
         <div className="col-span-4 px-5">
-          <UserInteractionsTable userInteractions={allInteractions} />
+          <UserInteractionsTable
+            userInteractions={allInteractions}
+            features={[data.itemFeatures, data.eventFeatures]}
+          />
         </div>
       </div>
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2">

@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useEffect } from "react";
 
 interface SelectorProps extends React.HTMLAttributes<HTMLDivElement> {
   placeholder: string;
@@ -37,9 +38,7 @@ const Selector = ({
           className
         )}
       >
-        <SelectValue>
-          {placeholder}
-        </SelectValue>
+        <SelectValue>{placeholder}</SelectValue>
         <SelectIcon>
           <ChevronDownIcon className="h-4 w-4 rounded-md font-bold text-slate-400" />
         </SelectIcon>
@@ -91,4 +90,62 @@ const SelectorLabeled = ({
   );
 };
 
-export { Selector, SelectorLabeled };
+interface DistributedSelectorProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  placeholder: string;
+  onValueChange: (value: string) => void;
+  features: any;
+}
+
+const DistributedSelector = ({
+  placeholder,
+  onValueChange,
+  className,
+  features,
+}: DistributedSelectorProps) => {
+  const ChevronDownIcon = Icons["chevronDown"];
+
+  return (
+    <Select onValueChange={onValueChange} value={placeholder}>
+      <SelectTrigger
+        className={cn(
+          "select--trigger flex justify-between items-center gap-x-2 px-1 drop-shadow-none outline-none",
+          className
+        )}
+      >
+        <SelectValue>{placeholder}</SelectValue>
+        <SelectIcon>
+          <ChevronDownIcon className="h-4 w-4 rounded-md font-bold text-slate-400" />
+        </SelectIcon>
+      </SelectTrigger>
+      <SelectPortal>
+        <SelectContent>
+          <div className="p-2">
+            <div className="mb-4">
+              <p className="pl-8 text-sm font-bold">Item features</p>
+              {features[0]?.map((item: string, index: number) => {
+                return (
+                  <SelectItem key={index} value={item}>
+                    {item}
+                  </SelectItem>
+                );
+              })}
+            </div>
+            <div>
+              <p className="pl-8 text-sm font-bold">Event features</p>
+              {features[1]?.map((item: string, index: number) => {
+                return (
+                  <SelectItem key={index} value={item}>
+                    {item}
+                  </SelectItem>
+                );
+              })}
+            </div>
+          </div>
+        </SelectContent>
+      </SelectPortal>
+    </Select>
+  );
+};
+
+export { Selector, SelectorLabeled, DistributedSelector };
