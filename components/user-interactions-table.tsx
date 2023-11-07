@@ -1,26 +1,27 @@
-"use client"
+"use client";
 
 import {
   DashboardTableHeader,
   DashboardTableWrapper,
   DashboardTableCell,
   DashboardEmptyRow,
-} from "./dashboard-table"
-import DescriptionModal from "./description-modal"
-import { MessageBox } from "./message-box"
-import { Selector, SelectorLabeled } from "./selector"
-import { Button } from "./ui/button"
-import React, { useEffect, useRef, useState } from "react"
+} from "./dashboard-table";
+import DescriptionModal from "./description-modal";
+import { MessageBox } from "./message-box";
+import { Selector, SelectorLabeled } from "./selector";
+import { Button } from "./ui/button";
+import React, { useEffect, useRef, useState } from "react";
 
 export function UserInteractionsTable({ userInteractions, error }: any) {
   // const [currentPage, setCurrentPage] = useState(1)
 
   // useEffect(() => setCurrentPage(1), [userInteractions])
-  const [label1, setlabel1] = useState("items_caption")
-  const [label2, setlabel2] = useState("items_content_type")
-  const [scrollPercentage, setScrollPercentage] = useState(0)
-  const tableRef = useRef<any>(null)
+  const [label1, setlabel1] = useState("items_caption");
+  const [label2, setlabel2] = useState("items_content_type");
+  const [scrollPercentage, setScrollPercentage] = useState(0);
+  const tableRef = useRef<any>(null);
 
+  // const recordsPerPage = 5
   // const recordsPerPage = 5
   // const firstIndex = (currentPage - 1) * recordsPerPage
   // const lastIndex = Math.min(
@@ -29,32 +30,32 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
   // )
   // const records = userInteractions?.slice(firstIndex, lastIndex)
 
-  const table = tableRef.current
-  const handleScroll = () => {
-    console.log("first")
-    if (tableRef.current) {
-      const rowHeight = 50 // Adjust this to match your row height
-      const scrollTop = tableRef.current.scrollTop
-      const newIndex = Math.floor(scrollTop / rowHeight)
-      console.log(newIndex)
-    }
-  }
-  useEffect(() => {
-    // document
-    //   .getElementById("table")
-    //   ?.addEventListener("scroll", (event) =>
-    //     console.log(event.target?.scrollTop)
-    //   )
-    console.log(tableRef.current)
-    if (tableRef.current) {
-      // window.addEventListener("scroll", handleScroll)
-      tableRef.current.onscroll = handleScroll as any
+  // const table = tableRef.current;
+  // const handleScroll = () => {
+  //   if (tableRef.current) {
+  //     const rowHeight = 37; // Adjust this to match your row height
+  //     const scrollTop = tableRef.current.scrollTop;
+  //     const newIndex = Math.floor(scrollTop / rowHeight);
+  //     console.log(newIndex);
+  //     console.log(userInteractions[newIndex]);
+  //   }
+  // };
+  // useEffect(() => {
+  //   // document
+  //   //   .getElementById("table")
+  //   //   ?.addEventListener("scroll", (event) =>
+  //   //     console.log(event.target?.scrollTop)
+  //   //   )
+  //   console.log(tableRef);
+  //   if (tableRef.current) {
+  //     // window.addEventListener("scroll", handleScroll)
+  //     tableRef.current.onscroll = handleScroll as any;
 
-      return () => {
-        table?.removeEventListener("scroll", handleScroll)
-      }
-    }
-  }, [])
+  //     return () => {
+  //       table?.removeEventListener("scroll", handleScroll);
+  //     };
+  //   }
+  // }, []);
 
   return (
     <div className="flex justify-center">
@@ -64,25 +65,27 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
         </DashboardEmptyRow>
       ) : userInteractions == null ? (
         <DashboardEmptyRow className="text-center" colSpan={5}>
-          <MessageBox title="No data yet">
-            Enter a user_id and click submit.
+          <MessageBox title="No Recent Interactions">
+            No events found for this session
           </MessageBox>
         </DashboardEmptyRow>
       ) : userInteractions && userInteractions.length === 0 ? (
         <DashboardEmptyRow className="text-center" colSpan={5}>
-          <MessageBox title="No previous interaction found"></MessageBox>
+          <MessageBox title="No Interactions">
+            Please select a session to view interactions
+          </MessageBox>
         </DashboardEmptyRow>
       ) : (
         <div className="w-full">
           <div className="my-2 bg-white font-bold text-black">
             Recent Events
           </div>
-          <div onScroll={handleScroll} className="">
-            <div id="table" className="table-container max-w-full">
-              <table
-                className="w-full border border-solid border-gray-200"
-                ref={tableRef}
-              >
+          <div className="">
+            <div
+              id="table"
+              className="table-container max-w-full"
+            >
+              <table className="w-full border border-solid border-gray-200">
                 <thead className="sticky top-0 z-10">
                   <tr>
                     <DashboardTableHeader className="w-[30%] bg-white text-sm font-bold normal-case text-black">
@@ -97,7 +100,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                           "items_user_id",
                         ]}
                         onValueChange={(value: string) => {
-                          setlabel1(value)
+                          setlabel1(value);
                         }}
                         className="ml-0 px-0 shadow-none outline-none"
                       />
@@ -114,7 +117,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                           "items_user_id",
                         ]}
                         onValueChange={(value: string) => {
-                          setlabel2(value)
+                          setlabel2(value);
                         }}
                         className="ml-0 px-0 shadow-none outline-none"
                       />
@@ -175,7 +178,7 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
                         </DashboardTableCell>
                         <DashboardTableCell className="w-[5%]"></DashboardTableCell>
                       </tr>
-                    )
+                    );
                   })}
                 </tbody>
               </table>
@@ -208,5 +211,5 @@ export function UserInteractionsTable({ userInteractions, error }: any) {
         </div>
       )}
     </div>
-  )
+  );
 }

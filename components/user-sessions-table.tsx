@@ -6,11 +6,11 @@ import {
   DashboardTableCell,
 } from "./dashboard-table";
 import DescriptionModal from "./description-modal";
-import React from "react";
+import React, { useEffect } from "react";
 
 export function UserSessionsTable({
   recentSessions,
-  currentSession,
+  currentSessions,
   onSessionChange,
   error,
 }: any) {
@@ -36,17 +36,34 @@ export function UserSessionsTable({
               </thead>
               <tbody className="relative divide-y divide-gray-200">
                 {recentSessions.map((session: any, index: number) => {
+                  const isSelected = currentSessions?.includes(
+                    session.sessionStartTime
+                  );
+
                   return (
                     <tr
                       key={index}
                       className={`cursor-pointer hover:bg-gray-50`}
                       onClick={() => {
-                        onSessionChange(session.sessionStartTime);
+                        onSessionChange((prevSessions: any) => {
+                          const sessionIndex = prevSessions.indexOf(
+                            session.sessionStartTime
+                          );
+
+                          if (sessionIndex !== -1) {
+                            // If the session start time is already in the array, remove it.
+                            prevSessions.splice(sessionIndex, 1);
+                          } else {
+                            // If the session start time is not in the array, add it.
+                            prevSessions.push(session.sessionStartTime);
+                          }
+                          return [...prevSessions];
+                        });
                       }}
                     >
                       <DashboardTableCell
                         className={`${
-                          currentSession === session.sessionStartTime
+                          isSelected
                             ? "bg-[#1e293b] text-white"
                             : "bg-white text-gray-500"
                         } w-[20%]`}

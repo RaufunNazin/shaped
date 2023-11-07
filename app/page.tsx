@@ -1,16 +1,16 @@
-"use client"
-import React, { useEffect, useMemo, useRef, useState } from "react"
+"use client";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 // import ModelCard from "@/components/model-card";
-import { Selector, SelectorLabeled } from "@/components/selector"
-import { UserAttrubuteTable } from "@/components/user-attribute-table"
-import { DashboardTableWrapper } from "@/components/dashboard-table"
-import { DashboardShell } from "@/components/shell"
-import { UserInteractionsTable } from "@/components/user-interactions-table"
+import { Selector, SelectorLabeled } from "@/components/selector";
+import { UserAttrubuteTable } from "@/components/user-attribute-table";
+import { DashboardTableWrapper } from "@/components/dashboard-table";
+import { DashboardShell } from "@/components/shell";
+import { UserInteractionsTable } from "@/components/user-interactions-table";
 // import ConfigurationCard from "@/components/configuration-card";
-import { Switch } from "@/components/ui/switch"
-import { UserResultsTable } from "@/components/user-results-table"
-import { UserSessionsTable } from "@/components/user-sessions-table"
-import { UserActivityBarChart } from "@/components/user-activity-barchart"
+import { Switch } from "@/components/ui/switch";
+import { UserResultsTable } from "@/components/user-results-table";
+import { UserSessionsTable } from "@/components/user-sessions-table";
+import { UserActivityBarChart } from "@/components/user-activity-barchart";
 
 const Page = () => {
   //   const modelCardData = [
@@ -135,7 +135,7 @@ const Page = () => {
       source: "Recommended",
       shapley: 0.9789,
     },
-  ]
+  ];
   const [data, setData] = useState({
     userAttributes: {
       user_id: "459907",
@@ -433,26 +433,35 @@ const Page = () => {
         ],
       },
     ],
-  })
-  const [user, setUser] = useState("Power user")
-  const [userId, setUserId] = useState("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72")
-  const [algorithm, setAlgorithm] = useState("Personalized")
-  const [diversity, setDiversity] = useState(10)
-  const [exploration, setExploration] = useState(10)
-  const [pagination, setPagination] = useState(true)
-  const [randomUser, setRandomUser] = useState("")
-  const [dataFilter1, setDataFilter1] = useState("Last Month")
-  const [dataFilter2, setDataFilter2] = useState("genre")
-  const [selectedSession, setSelectedSession] = useState("2023-10-01 12:00:00")
-  const [userActivityFilter, setUserActivityFilter] = useState("Last Week")
+  });
+  const [user, setUser] = useState("Power user");
+  const [userId, setUserId] = useState("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
+  const [algorithm, setAlgorithm] = useState("Personalized");
+  const [diversity, setDiversity] = useState(10);
+  const [exploration, setExploration] = useState(10);
+  const [pagination, setPagination] = useState(true);
+  const [randomUser, setRandomUser] = useState("");
+  const [dataFilter1, setDataFilter1] = useState("Last Month");
+  const [dataFilter2, setDataFilter2] = useState("genre");
+  const [selectedSessions, setSelectedSessions] = useState([
+    data?.recentSessions[0].sessionStartTime,
+  ]);
+  const [userActivityFilter, setUserActivityFilter] = useState("Last Week");
 
   const allInteractions = useMemo(() => {
-    return data.recentSessions.flatMap((session: any, index: number) => {
-      return session.sessionEvents.map((event: any) => {
-        return { ...event, sessionIndex: index }
-      })
-    })
-  }, [data])
+    if (!data) return []; // Handle the case when data is not available yet
+
+    const filteredInteractions = data.recentSessions.filter((session) =>
+      selectedSessions?.includes(session.sessionStartTime)
+    );
+
+    // Extract sessionEvents and put them in a new array
+    const sessionEventsArray = filteredInteractions
+      .map((session) => session.sessionEvents)
+      .flat();
+
+    return sessionEventsArray;
+  }, [data, selectedSessions]);
 
   return (
     <div>
@@ -461,7 +470,7 @@ const Page = () => {
           placeholder={user}
           items={["Power user", "Cold-start user", "Random user", "Input user"]}
           onValueChange={(value: string) => {
-            setUser(value)
+            setUser(value);
           }}
           className="rounded-l-xl border-2 border-r-0 p-2"
         />
@@ -474,7 +483,7 @@ const Page = () => {
               "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
             ]}
             onValueChange={(value: string) => {
-              setUserId(value)
+              setUserId(value);
             }}
             className="w-[450px] rounded-r-xl border-2 p-2"
           />
@@ -487,7 +496,7 @@ const Page = () => {
               "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
             ]}
             onValueChange={(value: string) => {
-              setUserId(value)
+              setUserId(value);
             }}
             className="w-[450px] rounded-r-xl border-2 p-2"
           />
@@ -497,7 +506,7 @@ const Page = () => {
             <button
               className="text-sm font-medium text-gray-500"
               onClick={() => {
-                setRandomUser("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72")
+                setRandomUser("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
               }}
             >
               Generate
@@ -543,8 +552,8 @@ const Page = () => {
         <div className="px-5">
           <UserSessionsTable
             recentSessions={data.recentSessions}
-            currentSession={selectedSession}
-            onSessionChange={setSelectedSession}
+            currentSessions={selectedSessions}
+            onSessionChange={setSelectedSessions}
           />
         </div>
         <div className="col-span-4 px-5">
@@ -560,7 +569,7 @@ const Page = () => {
                 placeholder={dataFilter2}
                 items={["genre", "activity", "events"]}
                 onValueChange={(value: string) => {
-                  setDataFilter2(value)
+                  setDataFilter2(value);
                 }}
                 className="rounded-lg border px-4 py-2 shadow-md"
               />
@@ -568,7 +577,7 @@ const Page = () => {
                 placeholder={dataFilter1}
                 items={["Last Week", "Last Month"]}
                 onValueChange={(value: string) => {
-                  setDataFilter1(value)
+                  setDataFilter1(value);
                 }}
                 className="rounded-lg border px-4 py-2 shadow-md"
               />
@@ -617,7 +626,7 @@ const Page = () => {
         onPaginationChange={setPagination}
       /> */}
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;
