@@ -113,16 +113,23 @@ const CustomBarChart = ({
 };
 
 interface TitledBarChartProps extends SingleDataPointGraph {}
-const TitledBarChart = ({ chartTitle, data }: TitledBarChartProps) => {
+const TitledBarChart = ({
+  data,
+  chartTitle,
+  width,
+  height,
+  margin,
+  minY = 1,
+}: CustomBarChartProps) => {
   return (
     <div className="flex flex-col items-center space-y-4">
       <p className="ml-8 text-xl font-bold">{chartTitle}</p>
       <CustomBarChart
         data={data}
-        width={800}
-        height={320}
+        width={width}
+        height={height}
         chartTitle={chartTitle}
-        margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+        margin={margin}
       />
     </div>
   );

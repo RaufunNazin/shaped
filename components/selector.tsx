@@ -122,20 +122,20 @@ const DistributedSelector = ({
         <SelectContent>
           <div className="p-2">
             <div className="mb-4">
-              <p className="pl-8 text-sm font-bold">Item features</p>
+              <p className="pl-8 text-sm font-bold mb-1">Item features</p>
               {features[0]?.map((item: string, index: number) => {
                 return (
-                  <SelectItem key={index} value={item}>
+                  <SelectItem key={index} value={item} className="py-0.5">
                     {item}
                   </SelectItem>
                 );
               })}
             </div>
             <div>
-              <p className="pl-8 text-sm font-bold">Event features</p>
+              <p className="pl-8 text-sm font-bold mb-1">Event features</p>
               {features[1]?.map((item: string, index: number) => {
                 return (
-                  <SelectItem key={index} value={item}>
+                  <SelectItem key={index} value={item} className="py-0.5">
                     {item}
                   </SelectItem>
                 );

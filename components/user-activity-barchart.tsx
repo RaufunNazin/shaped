@@ -46,39 +46,60 @@ export function UserActivityBarChart({
                   name: "<10th",
                   value: 10,
                   alias: "<10th",
-                  color: userActivity > 0 && userActivity < 11 ? "#6366f1" : "#cbd5e1",
+                  color:
+                    userActivity > 0 && userActivity < 11
+                      ? "#6366f1"
+                      : "#cbd5e1",
                 },
                 {
                   name: "20th",
                   value: 20,
                   alias: "20th",
-                  color: userActivity > 10 && userActivity < 21 ? "#6366f1" : "#cbd5e1",
+                  color:
+                    userActivity > 10 && userActivity < 21
+                      ? "#6366f1"
+                      : "#cbd5e1",
                 },
                 {
                   name: "40th",
                   value: 40,
                   alias: "40th",
-                  color: userActivity > 20 && userActivity < 41 ? "#6366f1" : "#cbd5e1",
+                  color:
+                    userActivity > 20 && userActivity < 41
+                      ? "#6366f1"
+                      : "#cbd5e1",
                 },
                 {
                   name: "60th",
                   value: 60,
                   alias: "60th",
-                  color: userActivity > 40 && userActivity < 61 ? "#6366f1" : "#cbd5e1",
+                  color:
+                    userActivity > 40 && userActivity < 61
+                      ? "#6366f1"
+                      : "#cbd5e1",
                 },
                 {
                   name: "80th",
                   value: 80,
                   alias: "80th",
-                  color: userActivity > 60 && userActivity < 81 ? "#6366f1" : "#cbd5e1",
+                  color:
+                    userActivity > 60 && userActivity < 81
+                      ? "#6366f1"
+                      : "#cbd5e1",
                 },
                 {
                   name: ">90th",
                   value: 90,
                   alias: ">90th",
-                  color: userActivity > 80 && userActivity < 101 ? "#6366f1" : "#cbd5e1",
+                  color:
+                    userActivity > 80 && userActivity < 101
+                      ? "#6366f1"
+                      : "#cbd5e1",
                 },
               ]}
+              width={600}
+              height={225}
+              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
             />
           </div>
         )}

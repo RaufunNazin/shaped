@@ -6,13 +6,25 @@ import { UserAttrubuteTable } from "@/components/user-attribute-table";
 import { DashboardTableWrapper } from "@/components/dashboard-table";
 import { DashboardShell } from "@/components/shell";
 import { UserInteractionsTable } from "@/components/user-interactions-table";
-// import ConfigurationCard from "@/components/configuration-card";
+import ConfigurationCard from "@/components/configuration-card";
 import { Switch } from "@/components/ui/switch";
 import { UserResultsTable } from "@/components/user-results-table";
 import { UserSessionsTable } from "@/components/user-sessions-table";
 import { UserActivityBarChart } from "@/components/user-activity-barchart";
+import { OutlineTitleInfo } from "@/components/outline";
+import TitleInfo from "@/components/title-info";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
+import axios from "@/utils/axios-interceptor";
+import { useParams } from "next/navigation";
+import { CustomTabsTrigger, Tabs, TabsList } from "@/components/ui/tabs";
+import { RecommendationTabEnumNew } from "@/types/enums";
+import { toast } from "@/hooks/use-toast";
 
 const Page = () => {
+  const LightBulb = Icons["lightBulb"];
+  const params = useParams();
+  const modelName = params?.modelName as string;
   //   const modelCardData = [
   //     {
   //       id: 1,
@@ -134,6 +146,53 @@ const Page = () => {
       score: 0.9789,
       source: "Recommended",
       shapley: 0.9789,
+    },
+  ];
+
+  const newResultsData = [
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
+    },
+    {
+      item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
+      score: 0.9837,
     },
   ];
   const [data, setData] = useState({
@@ -443,10 +502,111 @@ const Page = () => {
   const [randomUser, setRandomUser] = useState("");
   const [dataFilter1, setDataFilter1] = useState("Last Month");
   const [dataFilter2, setDataFilter2] = useState("genre");
+  const [loading, setLoading] = useState(false);
+  const [loadingRandUserId, setLoadingRandUserId] = useState(false);
   const [selectedSessions, setSelectedSessions] = useState([
     data?.recentSessions[0].sessionStartTime,
   ]);
   const [userActivityFilter, setUserActivityFilter] = useState("Last Week");
+  const [currentTab, setCurrentTab] = useState<RecommendationTabEnumNew>(
+    RecommendationTabEnumNew.Rank
+  );
+
+  const handleRandomUser = async () => {
+    try {
+      setLoadingRandUserId(true);
+      const resp = await axios.get(
+        `/api/models/recommendation/random-user-id`,
+        {
+          params: { modelName },
+        }
+      );
+      setLoadingRandUserId(false);
+
+      setUserId(resp.data.data.userId);
+    } catch (error) {
+      setLoadingRandUserId(false);
+      console.log("error")
+      return toast({
+        title: "Something went wrong.",
+        description: "Error occurred while fetching random user id",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSubmit = async (userId: string) => {
+    // try {
+    //   setLoading(true)
+    //   setUserError("")
+    //   setRankError("")
+    //   const { apiKey } = await getOrganizationInfo()
+    //   if (!apiKey) {
+    //     setLoading(false)
+    //     setUserError("Something went wrong")
+    //     setRankError("Something went wrong")
+    //     return
+    //   }
+    //   const userPromise = axios
+    //     .get(`/api/models/recommendation/user-attributes-and-interactions`, {
+    //       params: { modelName, userId },
+    //     })
+    //     .then((userResp) => {
+    //       if (!userResp.data.success) setUserError(userResp.data.message)
+    //       else {
+    //         setUserAttributes(userResp.data.data.attributes ?? {})
+    //         userResp.data.data.interactions.sort(
+    //           (a, b) =>
+    //             moment(b.created_at).unix() - moment(a.created_at).unix()
+    //         )
+    //         for (const interaction of userResp.data.data.interactions) {
+    //           delete interaction.user_id
+    //         }
+    //         setUserInteractions(userResp.data.data.interactions)
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       setUserError(error.response.data.message)
+    //       console.log(
+    //         "Error occurred while fetching user attributes and interactions:",
+    //         error.response.data
+    //       )
+    //     })
+    //   const rankPromise = axios
+    //     .get(`/api/models/recommendation/user-rank-results`, {
+    //       params: { modelName, userId },
+    //       headers: { "x-api-key": apiKey },
+    //     })
+    //     .then((rankResp) => {
+    //       if (!rankResp.data.success) setRankError(rankResp.data.message)
+    //       else {
+    //         const rankResults = getRankResult(rankResp.data.data)
+    //         setResults(rankResults)
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       setRankError(
+    //         error.response.data.data?.detail ?? error.response.data.message
+    //       )
+    //       setRankErrorTitle(error.response.data.data?.title ?? "Error")
+    //       console.log(
+    //         "Error occurred while fetching user attributes and interactions:",
+    //         error.response.data
+    //       )
+    //     })
+    //   await userPromise
+    //   await rankPromise
+    //   setLoading(false)
+    // } catch (error) {
+    //   setUserError("Something went wrong")
+    //   setRankError("Something went wrong")
+    //   setLoading(false)
+    //   console.log(
+    //     "Error occurred while fetching user attributes and interactions:",
+    //     error
+    //   )
+    // }
+  };
 
   const allInteractions = useMemo(() => {
     if (!data) return []; // Handle the case when data is not available yet
@@ -464,106 +624,137 @@ const Page = () => {
   }, [data, selectedSessions]);
 
   return (
-    <div>
-      <div className="mt-5 flex px-5">
-        <Selector
-          placeholder={user}
-          items={["Power user", "Cold-start user", "Random user", "Input user"]}
-          onValueChange={(value: string) => {
-            setUser(value);
-          }}
-          className="rounded-l-xl border-2 border-r-0 p-2"
-        />
-        {user === "Power user" ? (
-          <Selector
-            placeholder={userId}
-            items={[
-              "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-              "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
-              "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
-            ]}
-            onValueChange={(value: string) => {
-              setUserId(value);
-            }}
-            className="w-[450px] rounded-r-xl border-2 p-2"
-          />
-        ) : user === "Cold-start user" ? (
-          <Selector
-            placeholder={userId}
-            items={[
-              "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
-              "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
-              "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
-            ]}
-            onValueChange={(value: string) => {
-              setUserId(value);
-            }}
-            className="w-[450px] rounded-r-xl border-2 p-2"
-          />
-        ) : user === "Random user" ? (
-          <div className="flex w-[450px] items-center justify-between gap-x-4 rounded-r-xl border-2 p-2">
-            <div>{randomUser}</div>
-            <button
-              className="text-sm font-medium text-gray-500"
-              onClick={() => {
-                setRandomUser("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
-              }}
-            >
-              Generate
-            </button>
+    <div className="p-5 flex flex-col space-y-5">
+      <DashboardTableWrapper className="max-w-full overflow-x-auto pb-8">
+        <div className="px-12">
+          <div className="flex justify-between items-center">
+            <TitleInfo title="Inspect" className="py-12" />
+            <div className="mt-5 flex px-5">
+              <Selector
+                placeholder={user}
+                items={[
+                  "Power user",
+                  "Cold-start user",
+                  "Random user",
+                  "Input user",
+                ]}
+                onValueChange={(value: string) => {
+                  setUser(value);
+                }}
+                className="rounded-l-xl border-2 border-r-0 p-2"
+              />
+              {user === "Power user" ? (
+                <Selector
+                  placeholder={userId}
+                  items={[
+                    "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
+                    "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
+                    "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
+                  ]}
+                  onValueChange={(value: string) => {
+                    setUserId(value);
+                  }}
+                  className="w-[450px] rounded-r-xl border-2 p-2"
+                />
+              ) : user === "Cold-start user" ? (
+                <Selector
+                  placeholder={userId}
+                  items={[
+                    "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
+                    "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
+                    "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
+                  ]}
+                  onValueChange={(value: string) => {
+                    setUserId(value);
+                  }}
+                  className="w-[450px] rounded-r-xl border-2 p-2"
+                />
+              ) : user === "Random user" ? (
+                <div className="flex w-[450px] items-center justify-between gap-x-4 rounded-r-xl border-2 p-2">
+                  <div>{randomUser}</div>
+                  <button
+                    onClick={handleRandomUser}
+                    className="mx-2 flex items-center rounded-2xl text-white"
+                    disabled={loadingRandUserId}
+                  >
+                    {loadingRandUserId ? (
+                      <Icons.spinner className="h-4 w-10 animate-spin text-gray-400" />
+                    ) : (
+                      <span className="text-sm font-semibold text-gray-400">
+                        Generate
+                      </span>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex w-[450px] items-center gap-x-4 rounded-r-xl border-2 p-2">
+                  <input className="outline-0 w-full" />
+                </div>
+              )}
+              <Button
+                type="submit"
+                onClick={() => handleSubmit(userId)}
+                className="w-[6.5rem] rounded-2xl bg-black text-white ml-5"
+                disabled={loading || userId == null || userId.length == 0}
+              >
+                {loading ? (
+                  <Icons.spinner className="mr-2 h-4 w-10 animate-spin" />
+                ) : (
+                  <div className="flex flex-row justify-between items-center space-x-1">
+                    <LightBulb className="h-4 w-4" />
+                    <div className="font-semibold">Submit</div>
+                  </div>
+                )}
+              </Button>
+            </div>
           </div>
-        ) : (
-          <div className="flex w-[450px] items-center gap-x-4 rounded-r-xl border-2 p-2">
-            <input className="outline-0" />
-          </div>
-        )}
-      </div>
-      {/* <div className="px-5">
-        <UserResultsTable resultsData={resultsData} />
-      </div> */}
-      <div className="grid grid-cols-2">
-        <div className="px-5">
-          <UserAttrubuteTable
-            userAttributes={{
-              age: 34,
-              gender: "male",
-              occupation: "engineer",
-              zip: 94102,
-            }}
-          />
-        </div>
-        <div className="px-5">
-          <UserActivityBarChart
-            title="User activity percentile"
-            userActivity={
-              userActivityFilter === "Last Day"
-                ? data.userActivityPercentile.lastDay
-                : userActivityFilter === "Last Week"
-                ? data.userActivityPercentile.lastWeek
-                : data.userActivityPercentile.lastMonth
-            }
-            userActivityFilter={userActivityFilter}
-            setUserActivityFilter={setUserActivityFilter}
-          />
-        </div>
-      </div>
 
-      <div className="mt-5 grid grid-cols-5">
-        <div className="px-5">
-          <UserSessionsTable
-            recentSessions={data.recentSessions}
-            currentSessions={selectedSessions}
-            onSessionChange={setSelectedSessions}
-          />
+          <div className="grid grid-cols-2">
+            <div className="px-5">
+              <UserAttrubuteTable
+                userAttributes={{
+                  age: 34,
+                  gender: "male",
+                  occupation: "engineer",
+                  zip: 94102,
+                }}
+              />
+            </div>
+            <div className="px-5">
+              <UserActivityBarChart
+                title="User activity percentile"
+                userActivity={
+                  userActivityFilter === "Last Day"
+                    ? data.userActivityPercentile.lastDay
+                    : userActivityFilter === "Last Week"
+                    ? data.userActivityPercentile.lastWeek
+                    : data.userActivityPercentile.lastMonth
+                }
+                userActivityFilter={userActivityFilter}
+                setUserActivityFilter={setUserActivityFilter}
+              />
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-5">
+            <div className="px-5">
+              <UserSessionsTable
+                recentSessions={data.recentSessions}
+                currentSessions={selectedSessions}
+                onSessionChange={setSelectedSessions}
+              />
+            </div>
+            <div className="col-span-4 px-5">
+              <UserInteractionsTable
+                userInteractions={allInteractions}
+                features={[data.itemFeatures, data.eventFeatures]}
+              />
+            </div>
+          </div>
         </div>
-        <div className="col-span-4 px-5">
-          <UserInteractionsTable
-            userInteractions={allInteractions}
-            features={[data.itemFeatures, data.eventFeatures]}
-          />
-        </div>
-      </div>
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2">
+      </DashboardTableWrapper>
+
+      {/* <div className="mt-6 grid grid-cols-1 lg:grid-cols-2">
         <div className="px-5">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="my-3 text-left font-bold">Vertical Bar Chart 1</h2>
@@ -587,7 +778,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-5 gap-5">
         {modelCardData.map((card) => {
           return (
@@ -602,32 +793,84 @@ const Page = () => {
           );
         })}
       </div> */}
-      {/* <ConfigurationCard
-        algorithm={algorithm}
-        diversity={diversity}
-        exploration={exploration}
-        pagination={pagination}
-        setDiversity={setDiversity}
-        setExploration={setExploration}
-        onAlgorithmChange={setAlgorithm}
-        onDiversityChange={(value: string) => {
-          const intValue = parseInt(value);
-          if (Number.isNaN(intValue)) setDiversity(0);
-          else if (intValue === null) setDiversity(0);
-          else if (intValue < 100 || intValue === 100) setDiversity(intValue);
-          else if (intValue < 0 || intValue === 0) setDiversity(0);
-          else if (intValue > 100) setDiversity(100);
-        }}
-        onExplorationChange={(value: string) => {
-          const intValue = parseInt(value);
-          if (Number.isNaN(intValue)) setExploration(0);
-          else if (intValue === null) setExploration(0);
-          else if (intValue < 100 || intValue === 100) setExploration(intValue);
-          else if (intValue < 0 || intValue === 0) setExploration(0);
-          else if (intValue > 100) setExploration(100);
-        }}
-        onPaginationChange={setPagination}
-      /> */}
+      <DashboardTableWrapper className="max-w-full overflow-x-auto pb-8">
+        <div className="px-12">
+          <div className="flex justify-between items-center">
+            <TitleInfo title="Rank" className="py-12" />
+            <div className="flex w-[30%] justify-center">
+              <Tabs
+                defaultValue={RecommendationTabEnumNew.Rank}
+                orientation="vertical"
+                onValueChange={(e: any) =>
+                  setCurrentTab(e as RecommendationTabEnumNew)
+                }
+              >
+                <TabsList aria-label="tabs example" className="bg-white">
+                  <CustomTabsTrigger
+                    value={RecommendationTabEnumNew.Rank}
+                    activeValue={currentTab}
+                  >
+                    Rank
+                  </CustomTabsTrigger>
+                  <CustomTabsTrigger
+                    value={RecommendationTabEnumNew.Similar}
+                    activeValue={currentTab}
+                  >
+                    Similar
+                  </CustomTabsTrigger>
+                  <CustomTabsTrigger
+                    value={RecommendationTabEnumNew.Search}
+                    activeValue={currentTab}
+                  >
+                    Search
+                  </CustomTabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            <div></div>
+          </div>
+          {currentTab === RecommendationTabEnumNew.Rank ? (
+            <div>
+              <ConfigurationCard
+                algorithm={algorithm}
+                diversity={diversity}
+                exploration={exploration}
+                pagination={pagination}
+                setDiversity={setDiversity}
+                setExploration={setExploration}
+                onAlgorithmChange={setAlgorithm}
+                onDiversityChange={(value: string) => {
+                  const intValue = parseInt(value);
+                  if (Number.isNaN(intValue)) setDiversity(0);
+                  else if (intValue === null) setDiversity(0);
+                  else if (intValue < 100 || intValue === 100)
+                    setDiversity(intValue);
+                  else if (intValue < 0 || intValue === 0) setDiversity(0);
+                  else if (intValue > 100) setDiversity(100);
+                }}
+                onExplorationChange={(value: string) => {
+                  const intValue = parseInt(value);
+                  if (Number.isNaN(intValue)) setExploration(0);
+                  else if (intValue === null) setExploration(0);
+                  else if (intValue < 100 || intValue === 100)
+                    setExploration(intValue);
+                  else if (intValue < 0 || intValue === 0) setExploration(0);
+                  else if (intValue > 100) setExploration(100);
+                }}
+                onPaginationChange={setPagination}
+              />
+
+              <div className="px-5">
+                <UserResultsTable resultsData={newResultsData} />
+              </div>
+            </div>
+          ) : currentTab === RecommendationTabEnumNew.Similar ? (
+            <div className="text-center">Similar</div>
+          ) : (
+            <div className="text-center">Search</div>
+          )}
+        </div>
+      </DashboardTableWrapper>
     </div>
   );
 };
