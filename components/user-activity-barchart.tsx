@@ -5,32 +5,34 @@ import { TitledBarChart } from "./graphs/new-bar-chart";
 import { MessageBox } from "./message-box";
 import { Selector } from "./selector";
 
-interface TrainTabBarChartSectionProps
+interface UserActivityBarChartProps
   extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
+  subtitle?: string;
   userActivity: number | null;
-  userActivityFilter: string;
-  setUserActivityFilter: (value: string) => void;
+  filter1: string;
+  onFilter1Change: (value: string) => void;
 }
 
 export function UserActivityBarChart({
   title,
+  subtitle,
   userActivity,
-  userActivityFilter,
-  setUserActivityFilter,
-}: TrainTabBarChartSectionProps) {
+  filter1,
+  onFilter1Change,
+}: UserActivityBarChartProps) {
   return (
     <div className="flex w-full flex-col">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-3">
         <p className="my-2 text-black bg-white font-bold">{title}</p>
-        <p className="text-gray-500">Count of events relative to population</p>
+        <p className="text-gray-500">{subtitle ?? ""}</p>
         <Selector
-          placeholder={userActivityFilter}
+          placeholder={filter1}
           items={["Last Day", "Last Week", "Last Month"]}
           onValueChange={(value: string) => {
-            setUserActivityFilter(value);
+            onFilter1Change(value);
           }}
-          className="py-2 px-4 shadow-md rounded-lg border"
+          className="py-2 px-4 shadow-sm rounded-lg border"
         />
       </div>
 

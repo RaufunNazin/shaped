@@ -20,6 +20,7 @@ import { useParams } from "next/navigation";
 import { CustomTabsTrigger, Tabs, TabsList } from "@/components/ui/tabs";
 import { RecommendationTabEnumNew } from "@/types/enums";
 import { toast } from "@/hooks/use-toast";
+import { UserEventBarchart } from "@/components/user-event-barchart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -148,7 +149,6 @@ const Page = () => {
       shapley: 0.9789,
     },
   ];
-
   const newResultsData = [
     {
       item_id: "de80e902-5586-486b-995b6-486b6-486bde80e902-5586-486b-995",
@@ -498,10 +498,15 @@ const Page = () => {
   const [algorithm, setAlgorithm] = useState("Personalized");
   const [diversity, setDiversity] = useState(10);
   const [exploration, setExploration] = useState(10);
-  const [pagination, setPagination] = useState(true);
   const [randomUser, setRandomUser] = useState("");
-  const [dataFilter1, setDataFilter1] = useState("Last Month");
-  const [dataFilter2, setDataFilter2] = useState("genre");
+  const [eventSummaryFilter1, setEventSummaryFilter1] = useState("Last Month");
+  const [eventSummaryFilter2, setEventSummaryFilter2] = useState(
+    data.itemFeatures[0]
+  );
+  const [eventActivityFilter1, setEventActivityFilter1] =
+    useState("Last Month");
+  // const [eventActivityFilter2, setEventActivityFilter2] =
+  //   useState("Last Month");
   const [loading, setLoading] = useState(false);
   const [loadingRandUserId, setLoadingRandUserId] = useState(false);
   const [selectedSessions, setSelectedSessions] = useState([
@@ -526,7 +531,7 @@ const Page = () => {
       setUserId(resp.data.data.userId);
     } catch (error) {
       setLoadingRandUserId(false);
-      console.log("error")
+      console.log("error");
       return toast({
         title: "Something went wrong.",
         description: "Error occurred while fetching random user id",
@@ -723,6 +728,7 @@ const Page = () => {
             <div className="px-5">
               <UserActivityBarChart
                 title="User activity percentile"
+                subtitle="Count of events relative to population"
                 userActivity={
                   userActivityFilter === "Last Day"
                     ? data.userActivityPercentile.lastDay
@@ -730,8 +736,8 @@ const Page = () => {
                     ? data.userActivityPercentile.lastWeek
                     : data.userActivityPercentile.lastMonth
                 }
-                userActivityFilter={userActivityFilter}
-                setUserActivityFilter={setUserActivityFilter}
+                filter1={userActivityFilter}
+                onFilter1Change={setUserActivityFilter}
               />
             </div>
           </div>
@@ -751,34 +757,30 @@ const Page = () => {
               />
             </div>
           </div>
-        </div>
-      </DashboardTableWrapper>
-
-      {/* <div className="mt-6 grid grid-cols-1 lg:grid-cols-2">
-        <div className="px-5">
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="my-3 text-left font-bold">Vertical Bar Chart 1</h2>
-            <div className="flex items-center gap-x-2">
-              <Selector
-                placeholder={dataFilter2}
-                items={["genre", "activity", "events"]}
-                onValueChange={(value: string) => {
-                  setDataFilter2(value);
-                }}
-                className="rounded-lg border px-4 py-2 shadow-md"
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-2">
+            <div className="px-5">
+              <UserEventBarchart
+                title="Events Summary"
+                data={null}
+                filter1={eventSummaryFilter1}
+                filter2={eventSummaryFilter2}
+                filter2Value={[data.itemFeatures, data.eventFeatures]}
+                onFilter1Change={setEventSummaryFilter1}
+                onFilter2Change={setEventSummaryFilter2}
               />
-              <Selector
-                placeholder={dataFilter1}
-                items={["Last Week", "Last Month"]}
-                onValueChange={(value: string) => {
-                  setDataFilter1(value);
-                }}
-                className="rounded-lg border px-4 py-2 shadow-md"
+            </div>
+            <div className="px-5">
+              <UserEventBarchart
+                title="Event Activity"
+                data={null}
+                filter1={eventActivityFilter1}
+                onFilter1Change={setEventActivityFilter1}
               />
             </div>
           </div>
         </div>
-      </div> */}
+      </DashboardTableWrapper>
+
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-5 gap-5">
         {modelCardData.map((card) => {
           return (
@@ -835,7 +837,6 @@ const Page = () => {
                 algorithm={algorithm}
                 diversity={diversity}
                 exploration={exploration}
-                pagination={pagination}
                 setDiversity={setDiversity}
                 setExploration={setExploration}
                 onAlgorithmChange={setAlgorithm}
@@ -857,7 +858,6 @@ const Page = () => {
                   else if (intValue < 0 || intValue === 0) setExploration(0);
                   else if (intValue > 100) setExploration(100);
                 }}
-                onPaginationChange={setPagination}
               />
 
               <div className="px-5">

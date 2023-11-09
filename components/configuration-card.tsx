@@ -1,6 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Switch } from "./ui/switch";
-import { DoubleSwitch } from "./ui/double-switch";
 import {
   Tooltip,
   TooltipContent,
@@ -13,26 +12,22 @@ interface ConfigurationCardProps {
   algorithm: string;
   diversity: number;
   exploration: number;
-  pagination: boolean;
   setDiversity: Dispatch<SetStateAction<number>>;
   setExploration: Dispatch<SetStateAction<number>>;
   onAlgorithmChange: Dispatch<SetStateAction<string>>;
   onDiversityChange: (value: string) => void;
   onExplorationChange: (value: string) => void;
-  onPaginationChange: Dispatch<SetStateAction<boolean>>;
 }
 
 const ConfigurationCard = ({
   algorithm,
   diversity,
   exploration,
-  pagination,
   setDiversity,
   setExploration,
   onAlgorithmChange,
   onDiversityChange,
   onExplorationChange,
-  onPaginationChange,
 }: ConfigurationCardProps) => {
   const Info = Icons["infoSolid"];
   return (
