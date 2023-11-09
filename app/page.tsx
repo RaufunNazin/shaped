@@ -21,6 +21,7 @@ import { CustomTabsTrigger, Tabs, TabsList } from "@/components/ui/tabs";
 import { RecommendationTabEnumNew } from "@/types/enums";
 import { toast } from "@/hooks/use-toast";
 import { UserEventBarchart } from "@/components/user-event-barchart";
+import AreaChart from "@/components/graphs/area-chart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -632,6 +633,7 @@ const Page = () => {
     <div className="p-5 flex flex-col space-y-5">
       <DashboardTableWrapper className="max-w-full overflow-x-auto pb-8">
         <div className="px-12">
+          <AreaChart height={500} width={1500} />
           <div className="flex justify-between items-center">
             <TitleInfo title="Inspect" className="py-12" />
             <div className="mt-5 flex px-5">
