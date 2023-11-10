@@ -27,6 +27,8 @@ const Page = () => {
   const LightBulb = Icons["lightBulb"];
   const params = useParams();
   const modelName = params?.modelName as string;
+  const windowWidth =
+    typeof window !== "undefined" ? window.innerWidth * 0.9 : 2000;
   //   const modelCardData = [
   //     {
   //       id: 1,
@@ -633,7 +635,6 @@ const Page = () => {
     <div className="p-5 flex flex-col space-y-5">
       <DashboardTableWrapper className="max-w-full overflow-x-auto pb-8">
         <div className="px-12">
-          <AreaChart height={500} width={1500} />
           <div className="flex justify-between items-center">
             <TitleInfo title="Inspect" className="py-12" />
             <div className="mt-5 flex px-5">
@@ -779,6 +780,16 @@ const Page = () => {
                 onFilter1Change={setEventActivityFilter1}
               />
             </div>
+          </div>
+          <div className="px-5">
+            <AreaChart
+              title="Interaction frequencies"
+              subtitle={`Count of interactions by ${`item_id`}`}
+              percentiles={[8, 22, 44, 64, 78]}
+              item="item_id"
+              height={500}
+              width={windowWidth}
+            />
           </div>
         </div>
       </DashboardTableWrapper>
