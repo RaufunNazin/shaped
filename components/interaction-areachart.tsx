@@ -3,7 +3,7 @@ import AreaChart from "./graphs/area-chart";
 
 interface AreaProps {
   title: string;
-  data: { date: string; close: number }[];
+  data: { name: string; value: number }[];
   subtitle?: string;
   percentiles: number[];
   item: string;
@@ -57,6 +57,8 @@ const InteractionAreachart = ({
         height={height}
         width={width}
         margin={{ top: -1, right: -1, bottom: -1, left: -1 }}
+        fill="#e0e7ff"
+        stroke="#6366f1"
       />
       <p className="text-[#aebac9] text-sm text-center mt-3">{item ?? ""}</p>
     </div>

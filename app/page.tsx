@@ -10,7 +10,7 @@ import ConfigurationCard from "@/components/configuration-card";
 import { Switch } from "@/components/ui/switch";
 import { UserResultsTable } from "@/components/user-results-table";
 import { UserSessionsTable } from "@/components/user-sessions-table";
-import { UserActivityBarChart } from "@/components/user-activity-barchart";
+import { UserActivityAreaChart } from "@/components/user-activity-areachart";
 import { OutlineTitleInfo } from "@/components/outline";
 import TitleInfo from "@/components/title-info";
 import { Button } from "@/components/ui/button";
@@ -200,26 +200,26 @@ const Page = () => {
     },
   ];
   const interactionAreachartData = [
-    { date: "2012-04-11T07:00:00.000Z", close: 1 },
-    { date: "2012-04-12T07:00:00.000Z", close: 3 },
-    { date: "2012-04-13T07:00:00.000Z", close: 5 },
-    { date: "2012-04-14T07:00:00.000Z", close: 8 },
-    { date: "2012-04-15T07:00:00.000Z", close: 10 },
-    { date: "2012-04-16T07:00:00.000Z", close: 12 },
-    { date: "2012-04-17T07:00:00.000Z", close: 13 },
-    { date: "2012-04-18T07:00:00.000Z", close: 14 },
-    { date: "2012-04-19T07:00:00.000Z", close: 16 },
-    { date: "2012-04-20T07:00:00.000Z", close: 18 },
-    { date: "2012-04-21T07:00:00.000Z", close: 22 },
-    { date: "2012-04-22T07:00:00.000Z", close: 25 },
-    { date: "2012-04-23T07:00:00.000Z", close: 27 },
-    { date: "2012-04-24T07:00:00.000Z", close: 31 },
-    { date: "2012-04-25T07:00:00.000Z", close: 35 },
-    { date: "2012-04-26T07:00:00.000Z", close: 38 },
-    { date: "2012-04-27T07:00:00.000Z", close: 43 },
-    { date: "2012-04-28T07:00:00.000Z", close: 45 },
-    { date: "2012-04-29T07:00:00.000Z", close: 50 },
-    { date: "2012-04-30T07:00:00.000Z", close: 80 },
+    { name: "2012-04-11T07:00:00.000Z", value: 1 },
+    { name: "2012-04-12T07:00:00.000Z", value: 3 },
+    { name: "2012-04-13T07:00:00.000Z", value: 5 },
+    { name: "2012-04-14T07:00:00.000Z", value: 8 },
+    { name: "2012-04-15T07:00:00.000Z", value: 10 },
+    { name: "2012-04-16T07:00:00.000Z", value: 12 },
+    { name: "2012-04-17T07:00:00.000Z", value: 13 },
+    { name: "2012-04-18T07:00:00.000Z", value: 14 },
+    { name: "2012-04-19T07:00:00.000Z", value: 16 },
+    { name: "2012-04-20T07:00:00.000Z", value: 18 },
+    { name: "2012-04-21T07:00:00.000Z", value: 22 },
+    { name: "2012-04-22T07:00:00.000Z", value: 25 },
+    { name: "2012-04-23T07:00:00.000Z", value: 27 },
+    { name: "2012-04-24T07:00:00.000Z", value: 31 },
+    { name: "2012-04-25T07:00:00.000Z", value: 35 },
+    { name: "2012-04-26T07:00:00.000Z", value: 38 },
+    { name: "2012-04-27T07:00:00.000Z", value: 43 },
+    { name: "2012-04-28T07:00:00.000Z", value: 45 },
+    { name: "2012-04-29T07:00:00.000Z", value: 50 },
+    { name: "2012-04-30T07:00:00.000Z", value: 80 },
   ];
   const [data, setData] = useState({
     userAttributes: {
@@ -403,6 +403,7 @@ const Page = () => {
   const [user, setUser] = useState("Power user");
   const [userId, setUserId] = useState("4cb908bf-0ba5-4a7c-af4b-7954f49c9e72");
   const [recentSessions, setRecentSessions]: any = useState([]);
+  const [userActivityData, setUserActivityData]: any = useState([]);
   const [algorithm, setAlgorithm] = useState("Personalized");
   const [diversity, setDiversity] = useState(10);
   const [exploration, setExploration] = useState(10);
@@ -747,6 +748,37 @@ const Page = () => {
         },
       ],
     };
+    const activityData = [
+      { user_id: "2012-04-11T07:00:00.000Z", eventCount: 5 },
+      { user_id: "2012-04-12T07:00:00.000Z", eventCount: 15 },
+      { user_id: "2012-04-13T07:00:00.000Z", eventCount: 7 },
+      { user_id: "2012-04-14T07:00:00.000Z", eventCount: 12 },
+      { user_id: "2012-04-15T07:00:00.000Z", eventCount: 9 },
+      { user_id: "2012-04-16T07:00:00.000Z", eventCount: 20 },
+      { user_id: "2012-04-17T07:00:00.000Z", eventCount: 3 },
+      { user_id: "2012-04-18T07:00:00.000Z", eventCount: 18 },
+      { user_id: "2012-04-19T07:00:00.000Z", eventCount: 6 },
+      { user_id: "2012-04-20T07:00:00.000Z", eventCount: 14 },
+      { user_id: "2012-04-21T07:00:00.000Z", eventCount: 8 },
+      { user_id: "2012-04-22T07:00:00.000Z", eventCount: 11 },
+      { user_id: "2012-04-23T07:00:00.000Z", eventCount: 4 },
+      { user_id: "2012-04-24T07:00:00.000Z", eventCount: 17 },
+      { user_id: "2012-04-25T07:00:00.000Z", eventCount: 13 },
+      { user_id: "2012-04-26T07:00:00.000Z", eventCount: 2 },
+      { user_id: "2012-04-27T07:00:00.000Z", eventCount: 10 },
+      { user_id: "2012-04-28T07:00:00.000Z", eventCount: 19 },
+      { user_id: "2012-04-29T07:00:00.000Z", eventCount: 1 },
+      { user_id: "2012-04-30T07:00:00.000Z", eventCount: 16 },
+    ];
+    const modifiedActivityData = activityData.map(
+      ({ user_id, eventCount }) => ({
+        name: user_id,
+        value: eventCount,
+      })
+    );
+    setUserActivityData(
+      modifiedActivityData.sort((a: any, b: any) => a.value - b.value)
+    );
     setData(responseData);
     const sessions = calculateRecentSessions(responseData.interactions);
     setRecentSessions(sessions);
@@ -757,7 +789,7 @@ const Page = () => {
 
   useEffect(() => {
     if (interactionRef.current)
-      setInteractionAreachartWidth(interactionRef.current.clientWidth - 25);
+      setInteractionAreachartWidth(interactionRef.current.clientWidth - 60);
   }, []);
   if (loading) return <br />;
   else
@@ -859,8 +891,9 @@ const Page = () => {
                 />
               </div>
               <div className="px-5">
-                <UserActivityBarChart
+                <UserActivityAreaChart
                   title="User activity percentile"
+                  data={userActivityData}
                   subtitle="Count of events relative to population"
                   userActivity={
                     userActivityFilter === "Last Day"
