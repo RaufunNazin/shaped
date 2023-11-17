@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -24,6 +24,7 @@
     "@visx/scale": "^3.3.0",
     "@visx/shape": "^3.3.0",
     "@visx/tooltip": "^3.3.0",
+    "@visx/xychart": "^3.5.0",
     "axios": "^1.6.0",
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.0",

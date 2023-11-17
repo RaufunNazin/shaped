@@ -24,6 +24,7 @@ import { UserEventBarchart } from "@/components/user-event-barchart";
 import AreaChart from "@/components/graphs/area-chart";
 import InteractionAreachart from "@/components/interaction-areachart";
 import moment from "moment";
+import StackedChart from "@/components/graphs/stacked-chart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -795,6 +796,10 @@ const Page = () => {
   else
     return (
       <div className="p-5 flex flex-col space-y-5">
+        <div className="mt-48">
+          <StackedChart />
+        </div>
+
         <DashboardTableWrapper className="max-w-full overflow-x-auto pb-8">
           <div className="px-12">
             <div className="flex justify-between items-center">
