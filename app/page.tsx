@@ -24,13 +24,14 @@ import { UserEventBarchart } from "@/components/user-event-barchart";
 import AreaChart from "@/components/graphs/area-chart";
 import InteractionAreachart from "@/components/interaction-areachart";
 import moment from "moment";
-import StackedChart from "@/components/graphs/stacked-chart";
+import InteractionLineChart from "@/components/interaction-linechart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
   const params = useParams();
   const modelName = params?.modelName as string;
   const interactionRef = useRef<any>(null);
+  const interactionLineRef = useRef<any>(null);
   //   const modelCardData = [
   //     {
   //       id: 1,
@@ -201,26 +202,108 @@ const Page = () => {
     },
   ];
   const interactionAreachartData = [
-    { name: "2012-04-11T07:00:00.000Z", value: 1 },
-    { name: "2012-04-12T07:00:00.000Z", value: 3 },
-    { name: "2012-04-13T07:00:00.000Z", value: 5 },
-    { name: "2012-04-14T07:00:00.000Z", value: 8 },
-    { name: "2012-04-15T07:00:00.000Z", value: 10 },
-    { name: "2012-04-16T07:00:00.000Z", value: 12 },
-    { name: "2012-04-17T07:00:00.000Z", value: 13 },
-    { name: "2012-04-18T07:00:00.000Z", value: 14 },
-    { name: "2012-04-19T07:00:00.000Z", value: 16 },
-    { name: "2012-04-20T07:00:00.000Z", value: 18 },
-    { name: "2012-04-21T07:00:00.000Z", value: 22 },
-    { name: "2012-04-22T07:00:00.000Z", value: 25 },
-    { name: "2012-04-23T07:00:00.000Z", value: 27 },
-    { name: "2012-04-24T07:00:00.000Z", value: 31 },
-    { name: "2012-04-25T07:00:00.000Z", value: 35 },
-    { name: "2012-04-26T07:00:00.000Z", value: 38 },
-    { name: "2012-04-27T07:00:00.000Z", value: 43 },
-    { name: "2012-04-28T07:00:00.000Z", value: 45 },
-    { name: "2012-04-29T07:00:00.000Z", value: 50 },
     { name: "2012-04-30T07:00:00.000Z", value: 80 },
+    { name: "2012-04-29T07:00:00.000Z", value: 50 },
+    { name: "2012-04-28T07:00:00.000Z", value: 45 },
+    { name: "2012-04-27T07:00:00.000Z", value: 43 },
+    { name: "2012-04-26T07:00:00.000Z", value: 38 },
+    { name: "2012-04-25T07:00:00.000Z", value: 35 },
+    { name: "2012-04-24T07:00:00.000Z", value: 31 },
+    { name: "2012-04-23T07:00:00.000Z", value: 27 },
+    { name: "2012-04-22T07:00:00.000Z", value: 25 },
+    { name: "2012-04-21T07:00:00.000Z", value: 22 },
+    { name: "2012-04-20T07:00:00.000Z", value: 18 },
+    { name: "2012-04-19T07:00:00.000Z", value: 16 },
+    { name: "2012-04-18T07:00:00.000Z", value: 14 },
+    { name: "2012-04-17T07:00:00.000Z", value: 13 },
+    { name: "2012-04-16T07:00:00.000Z", value: 12 },
+    { name: "2012-04-15T07:00:00.000Z", value: 10 },
+    { name: "2012-04-14T07:00:00.000Z", value: 8 },
+    { name: "2012-04-13T07:00:00.000Z", value: 5 },
+    { name: "2012-04-12T07:00:00.000Z", value: 3 },
+    { name: "2012-04-11T07:00:00.000Z", value: 1 },
+  ];
+  const interactionLinechartData = [
+    {
+      name: "line1",
+      data: [
+        { x: "2020-01-01", y: 0 },
+        { x: "2020-01-02", y: 100 },
+        { x: "2020-01-03", y: 130 },
+        { x: "2020-01-04", y: 140 },
+        { x: "2020-01-05", y: 130 },
+        { x: "2020-01-06", y: 160 },
+        { x: "2020-01-07", y: 179 },
+        { x: "2020-01-08", y: 190 },
+        { x: "2020-01-09", y: 195 },
+        { x: "2020-01-10", y: 200 },
+      ],
+      color: "#818CF8",
+    },
+    {
+      name: "line2",
+      data: [
+        { x: "2020-01-01", y: 10 },
+        { x: "2020-01-02", y: 60 },
+        { x: "2020-01-03", y: 30 },
+        { x: "2020-01-04", y: 70 },
+        { x: "2020-01-05", y: 20 },
+        { x: "2020-01-06", y: 80 },
+        { x: "2020-01-07", y: 40 },
+        { x: "2020-01-08", y: 10 },
+        { x: "2020-01-09", y: 70 },
+        { x: "2020-01-10", y: 30 },
+      ],
+      color: "#FBBF24",
+    },
+    {
+      name: "line3",
+      data: [
+        { x: "2020-01-01", y: 50 },
+        { x: "2020-01-02", y: 20 },
+        { x: "2020-01-03", y: 60 },
+        { x: "2020-01-04", y: 30 },
+        { x: "2020-01-05", y: 80 },
+        { x: "2020-01-06", y: 10 },
+        { x: "2020-01-07", y: 40 },
+        { x: "2020-01-08", y: 20 },
+        { x: "2020-01-09", y: 90 },
+        { x: "2020-01-10", y: 10 },
+      ],
+      color: "#2DD4BF",
+    },
+    {
+      name: "line4",
+      data: [
+        { x: "2020-01-01", y: 30 },
+        { x: "2020-01-02", y: 50 },
+        { x: "2020-01-03", y: 10 },
+        { x: "2020-01-04", y: 40 },
+        { x: "2020-01-05", y: 70 },
+        { x: "2020-01-06", y: 20 },
+        { x: "2020-01-07", y: 60 },
+        { x: "2020-01-08", y: 30 },
+        { x: "2020-01-09", y: 80 },
+        { x: "2020-01-10", y: 40 },
+      ],
+      color: "#F472B6",
+    },
+    {
+      name: "line5",
+      data: [
+        { x: "2020-01-01", y: 20 },
+        { x: "2020-01-02", y: 70 },
+        { x: "2020-01-03", y: 40 },
+        { x: "2020-01-04", y: 80 },
+        { x: "2020-01-05", y: 30 },
+        { x: "2020-01-06", y: 60 },
+        { x: "2020-01-07", y: 10 },
+        { x: "2020-01-08", y: 50 },
+        { x: "2020-01-09", y: 30 },
+        { x: "2020-01-10", y: 70 },
+      ],
+      color: "#38BDF8",
+    },
   ];
   const [data, setData] = useState({
     userAttributes: {
@@ -424,6 +507,8 @@ const Page = () => {
     RecommendationTabEnumNew.Rank
   );
   const [interactionAreachartWidth, setInteractionAreachartWidth] =
+    useState(1500);
+  const [interactionLinechartWidth, setInteractionLinechartWidth] =
     useState(1500);
 
   const handleRandomUser = async () => {
@@ -791,15 +876,13 @@ const Page = () => {
   useEffect(() => {
     if (interactionRef.current)
       setInteractionAreachartWidth(interactionRef.current.clientWidth - 60);
+    if (interactionLineRef.current)
+      setInteractionLinechartWidth(interactionLineRef.current.clientWidth);
   }, []);
   if (loading) return <br />;
   else
     return (
       <div className="p-5 flex flex-col space-y-5">
-        <div className="mt-48">
-          <StackedChart />
-        </div>
-
         <DashboardTableWrapper className="max-w-full overflow-x-auto pb-8">
           <div className="px-12">
             <div className="flex justify-between items-center">
@@ -882,6 +965,18 @@ const Page = () => {
                   )}
                 </Button>
               </div>
+            </div>
+
+            <div className="px-5" ref={interactionLineRef}>
+              <InteractionLineChart
+                title="Interaction growth"
+                data={interactionLinechartData}
+                chartType="line"
+                subtitle={`Count of interactions since item was created`}
+                percentiles={[8, 22, 44, 64, 78]}
+                height={500}
+                width={interactionLinechartWidth}
+              />
             </div>
 
             <div className="grid grid-cols-2">

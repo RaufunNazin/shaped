@@ -8,106 +8,92 @@ import {
 import * as allCurves from "@visx/curve";
 import { useEffect, useMemo, useState } from "react";
 import { DashboardTableWrapper } from "../dashboard-table";
+import { scaleBand, scaleLinear } from "@visx/scale";
 
 const accessors = {
   xAccessor: (d: any) => d.x,
   yAccessor: (d: any) => d.y,
 };
 
-const StackedChart = ({ chartType = "line" }: any) => {
+interface stackedChartProps {
+  data: { name: string; data: { x: string; y: number }[]; color: string }[];
+  chartType: "line" | "area";
+  height: number;
+  width: number;
+}
+
+const StackedChart = ({
+  data,
+  chartType,
+  height,
+  width,
+}: stackedChartProps) => {
+  const [widthMultiplier, setWidthMultiplier] = useState(0);
+
   const [tooltipColor, setTooltipColor] = useState("black");
-  const [data, setData] = useState([
-    {
-      name: "line1",
-      data: [
-        { x: "2020-01-01", y: 0 },
-        { x: "2020-01-02", y: 100 },
-        { x: "2020-01-03", y: 130 },
-        { x: "2020-01-04", y: 140 },
-        { x: "2020-01-05", y: 130 },
-        { x: "2020-01-06", y: 160 },
-        { x: "2020-01-07", y: 179 },
-        { x: "2020-01-08", y: 190 },
-        { x: "2020-01-09", y: 195 },
-        { x: "2020-01-10", y: 200 },
-      ],
-      color: "#818CF8",
-    },
-    {
-      name: "line2",
-      data: [
-        { x: "2020-01-01", y: 10 },
-        { x: "2020-01-02", y: 60 },
-        { x: "2020-01-03", y: 30 },
-        { x: "2020-01-04", y: 70 },
-        { x: "2020-01-05", y: 20 },
-        { x: "2020-01-06", y: 80 },
-        { x: "2020-01-07", y: 40 },
-        { x: "2020-01-08", y: 10 },
-        { x: "2020-01-09", y: 70 },
-        { x: "2020-01-10", y: 30 },
-      ],
-      color: "#FBBF24",
-    },
-    {
-      name: "line3",
-      data: [
-        { x: "2020-01-01", y: 50 },
-        { x: "2020-01-02", y: 20 },
-        { x: "2020-01-03", y: 60 },
-        { x: "2020-01-04", y: 30 },
-        { x: "2020-01-05", y: 80 },
-        { x: "2020-01-06", y: 10 },
-        { x: "2020-01-07", y: 40 },
-        { x: "2020-01-08", y: 20 },
-        { x: "2020-01-09", y: 90 },
-        { x: "2020-01-10", y: 10 },
-      ],
-      color: "#2DD4BF",
-    },
-    {
-      name: "line4",
-      data: [
-        { x: "2020-01-01", y: 30 },
-        { x: "2020-01-02", y: 50 },
-        { x: "2020-01-03", y: 10 },
-        { x: "2020-01-04", y: 40 },
-        { x: "2020-01-05", y: 70 },
-        { x: "2020-01-06", y: 20 },
-        { x: "2020-01-07", y: 60 },
-        { x: "2020-01-08", y: 30 },
-        { x: "2020-01-09", y: 80 },
-        { x: "2020-01-10", y: 40 },
-      ],
-      color: "#F472B6",
-    },
-    {
-      name: "line5",
-      data: [
-        { x: "2020-01-01", y: 20 },
-        { x: "2020-01-02", y: 70 },
-        { x: "2020-01-03", y: 40 },
-        { x: "2020-01-04", y: 80 },
-        { x: "2020-01-05", y: 30 },
-        { x: "2020-01-06", y: 60 },
-        { x: "2020-01-07", y: 10 },
-        { x: "2020-01-08", y: 50 },
-        { x: "2020-01-09", y: 30 },
-        { x: "2020-01-10", y: 70 },
-      ],
-      color: "#38BDF8",
-    },
-  ]);
-  useEffect(() => {}, []);
+  const xMax = width - widthMultiplier - widthMultiplier;
+  const yMax = height - 5 - 20;
+
+  const xScale = scaleBand<string>({
+    domain: data.map((d, i) => d.data[i].x),
+    range: [0, xMax],
+    padding: 0.3,
+  });
+  const yMin = 0;
+  const yMaxi = Math.max(...data.map((d, i) => d.data[i].y));
+
+  const yScale = scaleLinear<number>({
+    domain: [yMin, yMaxi],
+    range: [height, 5],
+  });
+
+  const tickValues = yScale.ticks(5);
+
+  useEffect(() => {
+    // Function to update widthMultiplier based on window.innerWidth
+    const updateWidthMultiplier = () => {
+      setWidthMultiplier(-window.innerWidth * 0.04948);
+    };
+
+    // Initial setup
+    if (typeof window !== "undefined") {
+      updateWidthMultiplier();
+
+      // Add event listener for window resize
+      window.addEventListener("resize", updateWidthMultiplier);
+
+      // Cleanup the event listener on component unmount
+      return () => {
+        window.removeEventListener("resize", updateWidthMultiplier);
+      };
+    }
+  }, []);
   return (
     <div>
-      <DashboardTableWrapper>
-        <div className="">
+      <div className=" flex">
+        <div
+          className={`flex flex-col justify-between h-[${height}] mr-2 text-[#aebac9]`}
+        >
+          {tickValues.reverse().map((tick: number, index: number) => {
+            return (
+              <div key={index} className="text-right">
+                {tick}
+              </div>
+            );
+          })}
+        </div>
+        <div className="rounded-lg border border-solid border-gray-200">
           <XYChart
-            height={300}
+            height={height}
             xScale={{ type: "band" }}
             yScale={{ type: "linear" }}
-            margin={{ top: 5, right: 0, bottom: 0, left: 0 }}
+            width={width - 70}
+            margin={{
+              top: 5,
+              right: widthMultiplier,
+              bottom: 0,
+              left: widthMultiplier,
+            }}
           >
             {chartType === "area" &&
               data.map((item) => {
@@ -136,12 +122,10 @@ const StackedChart = ({ chartType = "line" }: any) => {
                   />
                 );
               })}
-
             <Tooltip
               snapTooltipToDatumX
               snapTooltipToDatumY
-              showVerticalCrosshair
-              showSeriesGlyphs
+              showDatumGlyph
               glyphStyle={{ fill: "#141515" }}
               renderTooltip={({ tooltipData }: any) => {
                 const item = data.find(
@@ -169,9 +153,35 @@ const StackedChart = ({ chartType = "line" }: any) => {
             />
           </XYChart>
         </div>
-      </DashboardTableWrapper>
+      </div>
+      <div className="flex justify-between">
+        {xScale.domain().map((d) => {
+          return (
+            <div className="text-[#aebac9] pl-8 mx-2" key={d}>
+              {d}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
-export default StackedChart;
+interface StackedChartWrapperProps extends stackedChartProps {}
+const StackedChartWrapper = ({
+  data,
+  chartType,
+  height,
+  width,
+}: StackedChartWrapperProps) => {
+  return (
+    <StackedChart
+      data={data}
+      chartType={chartType}
+      height={height}
+      width={width}
+    />
+  );
+};
+
+export { StackedChart, StackedChartWrapper };

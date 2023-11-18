@@ -10,6 +10,7 @@ import {
 } from "@visx/tooltip";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
 import { max, extent, bisector } from "@visx/vendor/d3-array";
+import { localPoint } from "@visx/event";
 
 type TooltipData = { name: string; value: number };
 
@@ -60,7 +61,7 @@ export default withTooltip<AreaProps, TooltipData>(
       () =>
         scaleBand<string>({
           range: [margin.left, innerWidth + margin.left],
-          domain: data.map((d) => d.name).reverse(), // Reverse the order of the domain
+          domain: data.map((d) => d.name), // Reverse the order of the domain
         }),
       [data, innerWidth, margin.left]
     );
@@ -76,35 +77,32 @@ export default withTooltip<AreaProps, TooltipData>(
     const tickValues = yScale.ticks(5);
 
     // tooltip handler
-    // const handleTooltip = useCallback(
-    //   (
-    //     event:
-    //       | React.TouchEvent<SVGRectElement>
-    //       | React.MouseEvent<SVGRectElement>
-    //   ) => {
-    //     const { x } = localPoint(event) || { x: 0 };
-    //     // Assuming xScale is now a scaleBand
-    //     const x0 = xScale.invert(x);
-    //     // Use Math.floor to get the index for the band
-    //     const index = Math.floor(xScale(x0.toString()));
-    //     const d0 = data[index - 1];
-    //     const d1 = data[index];
-    //     let d = d0;
-    //     if (d1 && getName(d1)) {
-    //       d =
-    //         x0.valueOf() - getName(d0).valueOf() >
-    //         getName(d1).valueOf() - x0.valueOf()
-    //           ? d1
-    //           : d0;
-    //     }
-    //     showTooltip({
-    //       tooltipData: d,
-    //       tooltipLeft: xScale(d.name) + xScale.bandwidth() / 2,
-    //       tooltipTop: yScale(getValue(d)),
-    //     });
-    //   },
-    //   [data, showTooltip, yScale, xScale]
-    // );
+    const handleTooltip = useCallback(
+      (
+        event:
+          | React.TouchEvent<SVGRectElement>
+          | React.MouseEvent<SVGRectElement>
+      ) => {
+        const { x } = localPoint(event) || { x: 0 };
+
+        // Assuming xScale is now a scaleBand
+
+        // Calculate the index based on the mouse position
+        const index = Math.floor((x - margin.left) / xScale.bandwidth());
+
+        // Ensure the index is within the valid range
+        if (index >= 0 && index < data.length) {
+          const d = data[index];
+
+          showTooltip({
+            tooltipData: d,
+            tooltipLeft: xScale(d.name) + margin.left + xScale.bandwidth() / 2,
+            tooltipTop: yScale(getValue(d)) + margin.top,
+          });
+        }
+      },
+      [data, showTooltip, yScale, xScale, margin.left, margin.top]
+    );
 
     return (
       <div className="flex">
@@ -137,9 +135,9 @@ export default withTooltip<AreaProps, TooltipData>(
             width={innerWidth}
             height={innerHeight}
             fill="transparent"
-            // onTouchStart={handleTooltip}
-            // onTouchMove={handleTooltip}
-            // onMouseMove={handleTooltip}
+            onTouchStart={handleTooltip}
+            onTouchMove={handleTooltip}
+            onMouseMove={handleTooltip}
             onMouseLeave={() => hideTooltip()}
           />
           {tooltipData && (
@@ -154,7 +152,7 @@ export default withTooltip<AreaProps, TooltipData>(
               />
               <circle
                 cx={tooltipLeft}
-                cy={tooltipTop + 1}
+                cy={tooltipTop + margin.top}
                 r={4}
                 fill="white"
                 fillOpacity={0.1}
@@ -165,7 +163,7 @@ export default withTooltip<AreaProps, TooltipData>(
               />
               <circle
                 cx={tooltipLeft}
-                cy={tooltipTop}
+                cy={tooltipTop + margin.top}
                 r={4}
                 fill={fill ? fill : "#cbd5e1"}
                 stroke="white"
@@ -179,13 +177,13 @@ export default withTooltip<AreaProps, TooltipData>(
           <div>
             <TooltipWithBounds
               key={Math.random()}
-              top={tooltipTop - 12}
-              left={tooltipLeft + 12}
+              top={tooltipTop - 12 + margin.top}
+              left={tooltipLeft + 40}
               style={tooltipStyles}
             >
               {`${getValue(tooltipData)}`}
             </TooltipWithBounds>
-            {/* <Tooltip
+            <Tooltip
               top={innerHeight + margin.top - 14}
               left={tooltipLeft}
               style={{
@@ -195,8 +193,8 @@ export default withTooltip<AreaProps, TooltipData>(
                 transform: "translateX(-50%)",
               }}
             >
-              {"name"}
-            </Tooltip> */}
+              {`${getName(tooltipData)}`}
+            </Tooltip>
           </div>
         )}
       </div>

@@ -26,16 +26,18 @@ export function UserInteractionsTable({
         <DashboardEmptyRow className="text-center" colSpan={5}>
           <MessageBox title="Error" subtitle={error} />
         </DashboardEmptyRow>
-      ) : userInteractions == null ? (
+      ) : userInteractions == null || userInteractions.length === 0 ? (
         <DashboardEmptyRow className="text-center" colSpan={5}>
-          <MessageBox title="No Recent Interactions">
-            No events found for this session
-          </MessageBox>
-        </DashboardEmptyRow>
-      ) : userInteractions && userInteractions.length === 0 ? (
-        <DashboardEmptyRow className="text-center" colSpan={5}>
-          <MessageBox title="No Interactions">
-            Please select a session to view interactions
+          <MessageBox
+            title={
+              userInteractions == null
+                ? "No Recent Interactions"
+                : "No Interactions"
+            }
+          >
+            {userInteractions == null
+              ? "No events found for this session"
+              : "Please select a session to view interactions"}
           </MessageBox>
         </DashboardEmptyRow>
       ) : (
