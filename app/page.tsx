@@ -971,7 +971,7 @@ const Page = () => {
               <InteractionLineChart
                 title="Interaction growth"
                 data={interactionLinechartData}
-                chartType="line"
+                chartType="area"
                 subtitle={`Count of interactions since item was created`}
                 percentiles={[8, 22, 44, 64, 78]}
                 height={500}
@@ -994,6 +994,7 @@ const Page = () => {
                 <UserActivityAreaChart
                   title="User activity percentile"
                   data={userActivityData}
+                  targetValue={15}
                   subtitle="Count of events relative to population"
                   userActivity={
                     userActivityFilter === "Last Day"

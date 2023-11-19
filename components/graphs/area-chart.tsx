@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect } from "react";
+import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { AreaClosed, Line, Bar } from "@visx/shape";
 import { curveMonotoneX } from "@visx/curve";
 import { scaleTime, scaleLinear, scaleBand } from "@visx/scale";
@@ -23,6 +23,7 @@ export type AreaProps = {
   data: { name: string; value: number }[];
   width: number;
   height: number;
+  targetValue?: number;
   fill?: string;
   stroke?: string;
   tooltipColor?: string;
@@ -34,6 +35,7 @@ export default withTooltip<AreaProps, TooltipData>(
     data,
     width,
     height,
+    targetValue,
     margin,
     fill,
     stroke,
@@ -45,6 +47,10 @@ export default withTooltip<AreaProps, TooltipData>(
     tooltipLeft = 0,
   }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
     if (width < 10) return null;
+    const [targetPosition, setTargetPosition] = useState<{
+      x: number;
+      y: number;
+    } | null>(null);
 
     const tooltipStyles = {
       ...defaultStyles,
@@ -104,6 +110,19 @@ export default withTooltip<AreaProps, TooltipData>(
       [data, showTooltip, yScale, xScale, margin.left, margin.top]
     );
 
+    useEffect(() => {
+      if (targetValue !== undefined) {
+        const index = data.findIndex((d) => getValue(d) === targetValue);
+        if (index !== -1) {
+          const d = data[index];
+          setTargetPosition({
+            x: xScale(getName(d)) + margin.left + xScale.bandwidth() / 2,
+            y: yScale(getValue(d)) + margin.top,
+          });
+        }
+      }
+    }, [data, targetValue, xScale, yScale, margin.left, margin.top]);
+
     return (
       <div className="flex">
         <div
@@ -140,6 +159,17 @@ export default withTooltip<AreaProps, TooltipData>(
             onMouseMove={handleTooltip}
             onMouseLeave={() => hideTooltip()}
           />
+          {targetPosition && (
+            <circle
+              cx={targetPosition.x}
+              cy={targetPosition.y - 5}
+              r={4}
+              fill={stroke}
+              stroke="white"
+              strokeWidth={2}
+              pointerEvents="none"
+            />
+          )}
           {tooltipData && (
             <g>
               <Line
@@ -152,20 +182,18 @@ export default withTooltip<AreaProps, TooltipData>(
               />
               <circle
                 cx={tooltipLeft}
-                cy={tooltipTop + margin.top}
+                cy={tooltipTop + margin.top - 4}
                 r={4}
-                fill="white"
-                fillOpacity={0.1}
+                fill={stroke}
                 stroke="white"
-                strokeOpacity={0.1}
                 strokeWidth={2}
                 pointerEvents="none"
               />
               <circle
                 cx={tooltipLeft}
-                cy={tooltipTop + margin.top}
+                cy={tooltipTop + margin.top - 4}
                 r={4}
-                fill={fill ? fill : "#cbd5e1"}
+                fill={stroke ? stroke : "#cbd5e1"}
                 stroke="white"
                 strokeWidth={2}
                 pointerEvents="none"

@@ -54,8 +54,8 @@ const InteractionAreachart = ({
       </div>
       <AreaChart
         data={data}
-        height={height}
         width={width}
+        height={height}
         margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
         fill="#e0e7ff"
         stroke="#6366f1"

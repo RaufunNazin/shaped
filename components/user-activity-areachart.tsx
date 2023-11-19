@@ -10,6 +10,7 @@ interface UserActivityAreaChartProps
   extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   data: { name: string; value: number }[];
+  targetValue: number;
   subtitle?: string;
   userActivity: number | null;
   filter1: string;
@@ -19,6 +20,7 @@ interface UserActivityAreaChartProps
 export function UserActivityAreaChart({
   title,
   data,
+  targetValue,
   subtitle,
   userActivity,
   filter1,
@@ -46,8 +48,9 @@ export function UserActivityAreaChart({
           <div className="w-full border rounded-lg">
             <AreaChart
               data={data}
-              height={225}
               width={600}
+              height={225}
+              targetValue={targetValue}
               margin={{ top: -1, right: -1, bottom: -1, left: -1 }}
               fill="#e0e7ff"
               stroke="#6366f1"
