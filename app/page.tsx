@@ -22,9 +22,9 @@ import { RecommendationTabEnumNew } from "@/types/enums";
 import { toast } from "@/hooks/use-toast";
 import { UserEventBarchart } from "@/components/user-event-barchart";
 import AreaChart from "@/components/graphs/area-chart";
-import InteractionAreachart from "@/components/interaction-areachart";
+import InteractionAreachart from "@/components/interaction-area-chart";
 import moment from "moment";
-import InteractionLineChart from "@/components/interaction-linechart";
+import InteractionLineChart from "@/components/interaction-line-chart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -507,7 +507,7 @@ const Page = () => {
     RecommendationTabEnumNew.Rank
   );
   const [interactionAreachartWidth, setInteractionAreachartWidth] =
-    useState(1500);
+    useState(1400);
   const [interactionLinechartWidth, setInteractionLinechartWidth] =
     useState(1500);
 
@@ -875,7 +875,7 @@ const Page = () => {
 
   useEffect(() => {
     if (interactionRef.current)
-      setInteractionAreachartWidth(interactionRef.current.clientWidth - 60);
+      setInteractionAreachartWidth(interactionRef.current.clientWidth);
     if (interactionLineRef.current)
       setInteractionLinechartWidth(interactionLineRef.current.clientWidth);
   }, []);
@@ -971,7 +971,7 @@ const Page = () => {
               <InteractionLineChart
                 title="Interaction growth"
                 data={interactionLinechartData}
-                chartType="area"
+                chartType="line"
                 subtitle={`Count of interactions since item was created`}
                 percentiles={[8, 22, 44, 64, 78]}
                 height={500}

@@ -24,31 +24,31 @@ const InteractionAreachart = ({
 }: AreaProps) => {
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <p className="my-2 text-black bg-white font-bold text-xl">{title}</p>
-          <p className="text-gray-500 text-sm">{subtitle ?? ""}</p>
+          <p className="my-2 bg-white text-xl font-bold text-black">{title}</p>
+          <p className="text-sm text-gray-500">{subtitle ?? ""}</p>
         </div>
         <div className="flex rounded-lg border">
-          <div className="pl-3 pr-7 py-1 border-r">
+          <div className="border-r py-1 pl-3 pr-7">
             <div className="text-gray-500">1st Percentile</div>
-            <div className="font-bold text-xl">{percentiles[0]}</div>
+            <div className="text-xl font-bold">{percentiles[0]}</div>
           </div>
-          <div className="pl-3 pr-7 py-1 border-r">
+          <div className="border-r py-1 pl-3 pr-7">
             <div className="text-gray-500">25th Percentile</div>
-            <div className="font-bold text-xl">{percentiles[1]}</div>
+            <div className="text-xl font-bold">{percentiles[1]}</div>
           </div>
-          <div className="pl-3 pr-7 py-1 border-r">
+          <div className="border-r py-1 pl-3 pr-7">
             <div className="text-gray-500">50th Percentile</div>
-            <div className="font-bold text-xl">{percentiles[2]}</div>
+            <div className="text-xl font-bold">{percentiles[2]}</div>
           </div>
-          <div className="pl-3 pr-7 py-1 border-r">
+          <div className="border-r py-1 pl-3 pr-7">
             <div className="text-gray-500">75th Percentile</div>
-            <div className="font-bold text-xl">{percentiles[3]}</div>
+            <div className="text-xl font-bold">{percentiles[3]}</div>
           </div>
-          <div className="pl-3 pr-7 py-1">
+          <div className="py-1 pl-3 pr-7">
             <div className="text-gray-500">99th Percentile</div>
-            <div className="font-bold text-xl">{percentiles[4]}</div>
+            <div className="text-xl font-bold">{percentiles[4]}</div>
           </div>
         </div>
       </div>
@@ -56,11 +56,11 @@ const InteractionAreachart = ({
         data={data}
         width={width}
         height={height}
-        margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+        margin={{ top: 5, right: 5, bottom: 0, left: -1 }}
         fill="#e0e7ff"
         stroke="#6366f1"
       />
-      <p className="text-[#aebac9] text-sm text-center mt-3">{item ?? ""}</p>
+      <p className="mt-3 text-center text-sm text-[#aebac9]">{item ?? ""}</p>
     </div>
   );
 };

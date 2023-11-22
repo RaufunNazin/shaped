@@ -102,8 +102,8 @@ export default withTooltip<AreaProps, TooltipData>(
 
           showTooltip({
             tooltipData: d,
-            tooltipLeft: xScale(d.name) + margin.left + xScale.bandwidth() / 2,
-            tooltipTop: yScale(getValue(d)) + margin.top,
+            tooltipLeft: xScale(d.name) + 3,
+            tooltipTop: yScale(getValue(d)),
           });
         }
       },
@@ -151,7 +151,7 @@ export default withTooltip<AreaProps, TooltipData>(
           <Bar
             x={margin.left}
             y={margin.top}
-            width={innerWidth}
+            width={width}
             height={innerHeight}
             fill="transparent"
             onTouchStart={handleTooltip}
@@ -212,8 +212,8 @@ export default withTooltip<AreaProps, TooltipData>(
               {`${getValue(tooltipData)}`}
             </TooltipWithBounds>
             <Tooltip
-              top={innerHeight + margin.top - 14}
-              left={tooltipLeft}
+              top={innerHeight + margin.top}
+              left={tooltipLeft + 17}
               style={{
                 ...defaultStyles,
                 minWidth: 72,
