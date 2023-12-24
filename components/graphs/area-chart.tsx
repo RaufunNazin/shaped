@@ -361,15 +361,14 @@ export default withTooltip<AreaProps, TooltipData>(
     tooltipLeft = 0,
   }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
     if (width < 10) return null;
-
-    const tickRef = useRef<any>(null);
-
-    const [tickValueWidth, setTickValueWidth] = useState(30);
-
     const [targetPosition, setTargetPosition] = useState<{
       x: number;
       y: number;
     } | null>(null);
+
+    const tickRef = useRef<any>(null);
+
+    const [tickValueWidth, setTickValueWidth] = useState(30);
 
     const tooltipStyles = {
       ...defaultStyles,
