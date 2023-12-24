@@ -1,7 +1,13 @@
-import React, { useMemo, useCallback, useEffect } from "react";
+import React, {
+  useMemo,
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { AreaClosed, Line, Bar } from "@visx/shape";
 import { curveMonotoneX } from "@visx/curve";
-import { scaleTime, scaleLinear } from "@visx/scale";
+import { scaleTime, scaleLinear, scaleBand } from "@visx/scale";
 import {
   withTooltip,
   Tooltip,
@@ -9,64 +15,345 @@ import {
   defaultStyles,
 } from "@visx/tooltip";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
-import { localPoint } from "@visx/event";
 import { max, extent, bisector } from "@visx/vendor/d3-array";
+import { localPoint } from "@visx/event";
 
-type TooltipData = { date: string; close: number };
+type TooltipData = { name: string; value: number; percentile: number };
 
-const data = [
-  { date: "2012-04-11T07:00:00.000Z", close: 1 },
-  { date: "2012-04-12T07:00:00.000Z", close: 3 },
-  { date: "2012-04-13T07:00:00.000Z", close: 5 },
-  { date: "2012-04-14T07:00:00.000Z", close: 8 },
-  { date: "2012-04-15T07:00:00.000Z", close: 10 },
-  { date: "2012-04-16T07:00:00.000Z", close: 12 },
-  { date: "2012-04-17T07:00:00.000Z", close: 13 },
-  { date: "2012-04-18T07:00:00.000Z", close: 14 },
-  { date: "2012-04-19T07:00:00.000Z", close: 16 },
-  { date: "2012-04-20T07:00:00.000Z", close: 18 },
-  { date: "2012-04-21T07:00:00.000Z", close: 22 },
-  { date: "2012-04-22T07:00:00.000Z", close: 25 },
-  { date: "2012-04-23T07:00:00.000Z", close: 27 },
-  { date: "2012-04-24T07:00:00.000Z", close: 31 },
-  { date: "2012-04-25T07:00:00.000Z", close: 35 },
-  { date: "2012-04-26T07:00:00.000Z", close: 38 },
-  { date: "2012-04-27T07:00:00.000Z", close: 43 },
-  { date: "2012-04-28T07:00:00.000Z", close: 45 },
-  { date: "2012-04-29T07:00:00.000Z", close: 50 },
-  { date: "2012-04-30T07:00:00.000Z", close: 80 },
-];
-const tooltipStyles = {
-  ...defaultStyles,
-  background: "#6366f1",
-  border: "1px solid white",
-  color: "white",
-};
-
-// accessors
-const getDate = (d: TooltipData) => new Date(d.date);
-const getDataValue = (d: TooltipData) => d.close;
-const bisectDate = bisector<TooltipData, Date>((d) => new Date(d.date)).left;
+// Accessors
+const getName = (d: TooltipData) => d.name;
+const getValue = (d: TooltipData) => d.value;
+const getPercentile = (d: TooltipData) => d.percentile;
+const getNameShaped = (d: TooltipData) => d.name;
+const getValueShaped = (d: TooltipData) => d.value;
+const getPercentileShaped = (d: TooltipData) => d.percentile;
 
 export type AreaProps = {
-  title: string;
-  subtitle?: string;
-  percentiles: number[];
-  item: string;
+  data: any;
   width: number;
   height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
+  targetValue?: number;
+  fill?: string;
+  stroke?: string;
+  tooltipColor?: string;
+  margin: { top: number; right: number; bottom: number; left: number };
 };
 
 export default withTooltip<AreaProps, TooltipData>(
   ({
-    title,
-    subtitle,
-    percentiles,
-    item,
+    data = [
+      [
+        {
+          name: "yimTNi1C7UoR2c8TNorv",
+          value: 2808,
+          percentile: 100,
+        },
+        {
+          name: "657d09dd682db25481042d87",
+          value: 613,
+          percentile: 99,
+        },
+        {
+          name: "XPvOLQKHM8T5c7BEr1B2",
+          value: 6,
+          percentile: 97,
+        },
+        {
+          name: "YlDiVJWdDkw2AwcTU6eb",
+          value: 4,
+          percentile: 95,
+        },
+        {
+          name: "31ELOk3QArhRem7fisqU",
+          value: 3,
+          percentile: 93,
+        },
+        {
+          name: "80OeZYgEwnLqESVSQNNZ",
+          value: 3,
+          percentile: 91,
+        },
+        {
+          name: "WAIUne87paQquynFBzZ5",
+          value: 3,
+          percentile: 89,
+        },
+        {
+          name: "7VWuaTkNzTpIPgzX0OJ3",
+          value: 2,
+          percentile: 87,
+        },
+        {
+          name: "y6HJJmiqth3xFyUqYNC3",
+          value: 2,
+          percentile: 85,
+        },
+        {
+          name: "2YbOMGJHmJTdqXh9g4bs",
+          value: 2,
+          percentile: 83,
+        },
+        {
+          name: "657936fa885fd5bad3a7408b",
+          value: 2,
+          percentile: 81,
+        },
+        {
+          name: "65835e8a98e0dcc3551e3f59",
+          value: 2,
+          percentile: 79,
+        },
+        {
+          name: "657b800362d47791b21ac5e6",
+          value: 1,
+          percentile: 77,
+        },
+        {
+          name: "NP4vbJO0I6irmkAKRzao",
+          value: 1,
+          percentile: 75,
+        },
+        {
+          name: "FKHb5DYi9YXpkHkVUyfa",
+          value: 1,
+          percentile: 73,
+        },
+        {
+          name: "ih2mxb2MMyqGpaDoAuZa",
+          value: 1,
+          percentile: 71,
+        },
+        {
+          name: "N8rcLCXA9mH7TCNZz5Wr",
+          value: 1,
+          percentile: 69,
+        },
+        {
+          name: "tE7lvzaWKJhhEVHRAW2V",
+          value: 1,
+          percentile: 67,
+        },
+        {
+          name: "xyBeyVaBCOpWBeRABkQt",
+          value: 1,
+          percentile: 65,
+        },
+        {
+          name: "657b75605b7844c699a26a68",
+          value: 1,
+          percentile: 63,
+        },
+        {
+          name: "kCcQPKP4UOUJ0RbwrTuD",
+          value: 1,
+          percentile: 61,
+        },
+        {
+          name: "6581ad2eaefd5a9cb36cb822",
+          value: 1,
+          percentile: 59,
+        },
+        {
+          name: "yaDRPaUTGzblMmqZhPEr",
+          value: 1,
+          percentile: 57,
+        },
+        {
+          name: "657a1ae0c9713fa269bca9e3",
+          value: 0,
+          percentile: 55,
+        },
+        {
+          name: "nW0ZK7L7DDQQW9WSYkH8",
+          value: 0,
+          percentile: 53,
+        },
+        {
+          name: "6582ef43367475d93fddf670",
+          value: 0,
+          percentile: 51,
+        },
+        {
+          name: "4u540sQtSl8WXIlBJK71",
+          value: 0,
+          percentile: 49,
+        },
+        {
+          name: "N4VTWQAlYcfWkDOq2Saa",
+          value: 0,
+          percentile: 47,
+        },
+        {
+          name: "VXpjTIZ8GDw2x9CkNLrg",
+          value: 0,
+          percentile: 45,
+        },
+        {
+          name: "6580b62f04550d1309ccc9d5",
+          value: 0,
+          percentile: 43,
+        },
+        {
+          name: "roKhjWoMbC2RPs9x4veK",
+          value: 0,
+          percentile: 41,
+        },
+        {
+          name: "1GeJJQh6czFVJD2GKVJd",
+          value: 0,
+          percentile: 39,
+        },
+        {
+          name: "q2B1VQyHDNMLfm8qtzeG",
+          value: 0,
+          percentile: 37,
+        },
+        {
+          name: "fKi1vGEB7qGBw70q3rXG",
+          value: 0,
+          percentile: 35,
+        },
+        {
+          name: "P8Es7VOT9zzuB3eaSBp2",
+          value: 0,
+          percentile: 33,
+        },
+        {
+          name: "aZf5VtLEDeyxrT9eSqG0",
+          value: 0,
+          percentile: 31,
+        },
+        {
+          name: "PEehMEgRPgTHPwED5AUQ",
+          value: 0,
+          percentile: 29,
+        },
+        {
+          name: "0MOjHxkLp0y8wCR9HZZH",
+          value: 0,
+          percentile: 27,
+        },
+        {
+          name: "657d18b5ccb2a497c02248a0",
+          value: 0,
+          percentile: 25,
+        },
+        {
+          name: "5fQjH0tfdELLP5yrBwPy",
+          value: 0,
+          percentile: 23,
+        },
+        {
+          name: "658383007e1eac2fa138a2c5",
+          value: 0,
+          percentile: 21,
+        },
+        {
+          name: "657a1e73a94442b88cd822fb",
+          value: 0,
+          percentile: 19,
+        },
+        {
+          name: "6580fae07e53b26f04c49cdf",
+          value: 0,
+          percentile: 17,
+        },
+        {
+          name: "9wMYQAjJefkzoMXjVn9o",
+          value: 0,
+          percentile: 15,
+        },
+        {
+          name: "UN1HStEVVb4zoHEFMlbb",
+          value: 0,
+          percentile: 13,
+        },
+        {
+          name: "7DPKorL23mSCqvZqQth7",
+          value: 0,
+          percentile: 11,
+        },
+        {
+          name: "SF2EAeZvRWmuoJ96vKbl",
+          value: 0,
+          percentile: 9,
+        },
+        {
+          name: "sRCN1dNuqmTvGF1Si40I",
+          value: 0,
+          percentile: 7,
+        },
+        {
+          name: "9ZAv8mMze3LEJjZo9FyW",
+          value: 0,
+          percentile: 5,
+        },
+        {
+          name: "TypyNz0s6TnwmdhPfICh",
+          value: 0,
+          percentile: 3,
+        },
+        {
+          name: "6AeDJBITx4TbtrnowX20",
+          value: 0,
+          percentile: 1,
+        },
+      ],
+      [
+        { name: "newName1", value: 1, percentile: 78 },
+        { name: "newName2", value: 2, percentile: 90 },
+        { name: "newName3", value: 3, percentile: 65 },
+        { name: "newName4", value: 4, percentile: 12 },
+        { name: "newName5", value: 5, percentile: 34 },
+        { name: "newName6", value: 6, percentile: 56 },
+        { name: "newName7", value: 7, percentile: 78 },
+        { name: "newName8", value: 8, percentile: 90 },
+        { name: "newName9", value: 9, percentile: 65 },
+        { name: "newName10", value: 10, percentile: 12 },
+        { name: "newName11", value: 11, percentile: 34 },
+        { name: "newName12", value: 12, percentile: 56 },
+        { name: "newName13", value: 13, percentile: 78 },
+        { name: "newName14", value: 14, percentile: 90 },
+        { name: "newName15", value: 15, percentile: 65 },
+        { name: "newName16", value: 16, percentile: 12 },
+        { name: "newName17", value: 17, percentile: 34 },
+        { name: "newName18", value: 18, percentile: 56 },
+        { name: "newName19", value: 19, percentile: 78 },
+        { name: "newName20", value: 20, percentile: 90 },
+        { name: "newName21", value: 21, percentile: 65 },
+        { name: "newName22", value: 22, percentile: 12 },
+        { name: "newName23", value: 23, percentile: 34 },
+        { name: "newName24", value: 24, percentile: 56 },
+        { name: "newName25", value: 25, percentile: 78 },
+        { name: "newName26", value: 26, percentile: 90 },
+        { name: "newName27", value: 27, percentile: 65 },
+        { name: "newName28", value: 28, percentile: 12 },
+        { name: "newName29", value: 29, percentile: 34 },
+        { name: "newName30", value: 30, percentile: 56 },
+        { name: "newName31", value: 31, percentile: 78 },
+        { name: "newName32", value: 32, percentile: 90 },
+        { name: "newName33", value: 33, percentile: 65 },
+        { name: "newName34", value: 34, percentile: 12 },
+        { name: "newName35", value: 35, percentile: 34 },
+        { name: "newName36", value: 36, percentile: 56 },
+        { name: "newName37", value: 37, percentile: 78 },
+        { name: "newName38", value: 38, percentile: 90 },
+        { name: "newName39", value: 39, percentile: 65 },
+        { name: "newName40", value: 40, percentile: 12 },
+      ],
+    ],
     width,
     height,
-    margin = { top: -1, right: -1, bottom: -1, left: -1 },
+    targetValue,
+    margin = {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
+    fill,
+    stroke,
+    tooltipColor,
     showTooltip,
     hideTooltip,
     tooltipData,
@@ -75,31 +362,64 @@ export default withTooltip<AreaProps, TooltipData>(
   }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
     if (width < 10) return null;
 
-    // bounds
-    const innerWidth = width - margin.left - margin.right;
+    const tickRef = useRef<any>(null);
+
+    const [tickValueWidth, setTickValueWidth] = useState(30);
+
+    const [targetPosition, setTargetPosition] = useState<{
+      x: number;
+      y: number;
+    } | null>(null);
+
+    const tooltipStyles = {
+      ...defaultStyles,
+      background: "#6366f1",
+      border: "1px solid white",
+      color: tooltipColor ? tooltipColor : "white",
+    };
+    // Bounds
+    const innerWidth = width - 5 - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    // scales
+    // Scales
     const xScale = useMemo(
       () =>
-        scaleTime({
-          range: [margin.left, innerWidth + margin.left],
-          domain: extent(data, getDate)?.reverse() as [Date, Date], // Reverse the order of the domain
+        scaleBand<string>({
+          range: [margin.left, innerWidth + margin.left - 70],
+          domain: data[0].map((d: any) => d.name),
         }),
-      [innerWidth, margin.left]
+      [data, innerWidth, margin.left]
+    );
+    const xScaleShaped = useMemo(
+      () =>
+        scaleBand<string>({
+          range: [margin.left, innerWidth + margin.left - 70],
+          domain: data[1].map((d: any) => d.name),
+        }),
+      [data, innerWidth, margin.left]
     );
     const yScale = useMemo(
       () =>
         scaleLinear({
           range: [innerHeight + margin.top, margin.top],
-          domain: [0, max(data, getDataValue) || 0],
+          domain: [0, max(data[0], getValue) || 0],
           nice: true,
         }),
-      [margin.top, innerHeight]
+      [data, margin.top, innerHeight]
+    );
+    const yScaleShaped = useMemo(
+      () =>
+        scaleLinear({
+          range: [innerHeight + margin.top, margin.top],
+          domain: [0, max(data[1], getValue) || 0],
+          nice: true,
+        }),
+      [data, margin.top, innerHeight]
     );
     const tickValues = yScale.ticks(5);
+    const tickValuesShaped = yScaleShaped.ticks(5);
 
-    // tooltip handler
+    // Tooltip handler
     const handleTooltip = useCallback(
       (
         event:
@@ -107,154 +427,182 @@ export default withTooltip<AreaProps, TooltipData>(
           | React.MouseEvent<SVGRectElement>
       ) => {
         const { x } = localPoint(event) || { x: 0 };
-        const x0 = xScale.invert(x);
-        const index = bisectDate(data, x0, 1);
-        const d0 = data[index - 1];
-        const d1 = data[index];
-        let d = d0;
-        if (d1 && getDate(d1)) {
-          d =
-            x0.valueOf() - getDate(d0).valueOf() >
-            getDate(d1).valueOf() - x0.valueOf()
-              ? d1
-              : d0;
+
+        // Assuming xScale is now a scaleBand
+
+        // Calculate the index based on the mouse position
+        const index = Math.floor((x - margin.left) / xScale.bandwidth());
+
+        // Ensure the index is within the valid range
+        if (index >= 0 && index < data[0].length) {
+          const d = data[0][index];
+
+          showTooltip({
+            tooltipData: d,
+            tooltipLeft: xScale(d.name)! + 3,
+            tooltipTop: yScale(getValue(d)),
+          });
         }
-        showTooltip({
-          tooltipData: d,
-          tooltipLeft: x,
-          tooltipTop: yScale(getDataValue(d)),
-        });
       },
-      [showTooltip, yScale, xScale]
+      [data, showTooltip, yScale, xScale, margin.left]
     );
 
-    return (
-      <div>
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <p className="my-2 text-black bg-white font-bold text-xl">
-              {title}
-            </p>
-            <p className="text-gray-500 text-sm">{subtitle ?? ""}</p>
-          </div>
-          <div className="flex rounded-lg border">
-            <div className="pl-3 pr-7 py-1 border-r">
-              <div className="text-gray-500">1st Percentile</div>
-              <div className="font-bold text-xl">{percentiles[0]}</div>
-            </div>
-            <div className="pl-3 pr-7 py-1 border-r">
-              <div className="text-gray-500">25th Percentile</div>
-              <div className="font-bold text-xl">{percentiles[1]}</div>
-            </div>
-            <div className="pl-3 pr-7 py-1 border-r">
-              <div className="text-gray-500">50th Percentile</div>
-              <div className="font-bold text-xl">{percentiles[2]}</div>
-            </div>
-            <div className="pl-3 pr-7 py-1 border-r">
-              <div className="text-gray-500">75th Percentile</div>
-              <div className="font-bold text-xl">{percentiles[3]}</div>
-            </div>
-            <div className="pl-3 pr-7 py-1">
-              <div className="text-gray-500">99th Percentile</div>
-              <div className="font-bold text-xl">{percentiles[4]}</div>
-            </div>
-          </div>
-        </div>
+    useEffect(() => {
+      if (tickRef.current) setTickValueWidth(tickRef.current.clientWidth);
+    }, []);
 
-        <div className="flex">
-          <div
-            className={`flex flex-col justify-between h-[${height}] mr-2 text-[#aebac9]`}
-          >
-            {tickValues.reverse().map((tick: number, index: number) => {
+    useEffect(() => {
+      if (targetValue !== undefined && data[0].length > 0) {
+        let closestIndex = 0;
+        let closestDifference = Math.abs(getValue(data[0]) - targetValue);
+
+        for (let i = 1; i < data.length; i++) {
+          const difference = Math.abs(getValue(data[i]) - targetValue);
+
+          if (difference < closestDifference) {
+            closestIndex = i;
+            closestDifference = difference;
+          }
+        }
+
+        const closestData = data[closestIndex];
+
+        setTargetPosition({
+          x: xScale(getName(closestData))! + 3,
+          y: yScale(getValue(closestData)) - 2,
+        });
+      }
+    }, [data, targetValue, xScale, yScale, margin.left, margin.top]);
+
+    return (
+      <div className="flex">
+        <div
+          className={`flex flex-col justify-between h-[${height}px] mr-2 text-[#aebac9]`}
+          ref={tickRef}
+        >
+          {data.length > 0 &&
+            tickValues.reverse().map((tick: number, index: number) => {
               return (
                 <div key={index} className="text-right">
                   {tick}
                 </div>
               );
             })}
-          </div>
-          <svg width={width} height={height} className="rounded-lg border">
-            <rect x={0} y={0} width={width} height={height} fill="white" />
+        </div>
+        <svg
+          width={innerWidth - tickValueWidth}
+          height={height}
+          className="rounded-lg border"
+        >
+          <rect
+            x={0}
+            y={0}
+            width={innerWidth - tickValueWidth}
+            height={height}
+            fill="white"
+          />
+          <AreaClosed<TooltipData>
+            data={data[0]}
+            x={(d) => xScale(getName(d)) ?? 0}
+            y={(d) => yScale(getValue(d)) ?? 0}
+            yScale={yScale}
+            strokeWidth={2}
+            fill={fill ? fill : "#cbd5e1"}
+            fillOpacity={0.5}
+            stroke={stroke ? stroke : "#cbd5e1"}
+            curve={curveMonotoneX}
+          />
+          {data.length > 1 && (
             <AreaClosed<TooltipData>
-              data={data}
-              x={(d) => xScale(getDate(d)) ?? 0}
-              y={(d) => yScale(getDataValue(d)) ?? 0}
+              data={data[1]}
+              x={(d) => xScaleShaped(getName(d)) ?? 0}
+              y={(d) => yScaleShaped(getValue(d)) ?? 0}
               yScale={yScale}
               strokeWidth={2}
-              stroke="#6366f1"
-              fill="#e0e7ff"
+              fill={"ff0000"}
+              fillOpacity={0.5}
+              stroke={stroke ? stroke : "#cbd5e1"}
               curve={curveMonotoneX}
             />
-            <Bar
-              x={margin.left}
-              y={margin.top}
-              width={innerWidth}
-              height={innerHeight}
-              fill="transparent"
-              onTouchStart={handleTooltip}
-              onTouchMove={handleTooltip}
-              onMouseMove={handleTooltip}
-              onMouseLeave={() => hideTooltip()}
-            />
-            {tooltipData && (
-              <g>
-                <Line
-                  from={{ x: tooltipLeft, y: margin.top }}
-                  to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-                  stroke={"#6366f1"}
-                  strokeWidth={2}
-                  pointerEvents="none"
-                  strokeDasharray="5,2"
-                />
-                <circle
-                  cx={tooltipLeft}
-                  cy={tooltipTop + 1}
-                  r={4}
-                  fill="white"
-                  fillOpacity={0.1}
-                  stroke="white"
-                  strokeOpacity={0.1}
-                  strokeWidth={2}
-                  pointerEvents="none"
-                />
-                <circle
-                  cx={tooltipLeft}
-                  cy={tooltipTop}
-                  r={4}
-                  fill={"#6366f1"}
-                  stroke="white"
-                  strokeWidth={2}
-                  pointerEvents="none"
-                />
-              </g>
-            )}
-          </svg>
-          {tooltipData && (
-            <div>
-              <TooltipWithBounds
-                key={Math.random()}
-                top={tooltipTop - 12}
-                left={tooltipLeft + 12}
-                style={tooltipStyles}
-              >
-                {`${getDataValue(tooltipData)}`}
-              </TooltipWithBounds>
-              {/* <Tooltip
-              top={innerHeight + margin.top - 14}
-              left={tooltipLeft}
-              style={{
-                ...defaultStyles,
-                minWidth: 72,
-                textAlign: "center",
-                transform: "translateX(-50%)",
-              }}
-            >
-              {"date"}
-            </Tooltip> */}
-            </div>
           )}
-        </div>
-        <p className="text-[#aebac9] text-sm text-center mt-3">{item ?? ""}</p>
+
+          <Bar
+            x={margin.left}
+            y={margin.top}
+            width={innerWidth - tickValueWidth}
+            height={height}
+            fill="transparent"
+            onTouchStart={handleTooltip}
+            onTouchMove={handleTooltip}
+            onMouseMove={handleTooltip}
+            onMouseLeave={() => hideTooltip()}
+          />
+          {targetPosition && (
+            <g>
+              <circle
+                cx={targetPosition.x - 1}
+                cy={targetPosition.y + 1}
+                r={4}
+                fill="#6366F1"
+                pointerEvents="none"
+              />
+              <Line
+                from={{ x: targetPosition.x - 1, y: 0 }}
+                to={{ x: targetPosition.x - 1, y: innerHeight + margin.top }}
+                stroke={"#6366f1"}
+                strokeWidth={1}
+                pointerEvents="none"
+                strokeDasharray="5,2"
+              />
+            </g>
+          )}
+          {tooltipData && (
+            <g>
+              <Line
+                from={{ x: tooltipLeft, y: 0 }}
+                to={{ x: tooltipLeft, y: innerHeight + margin.top }}
+                stroke={"#6366f1"}
+                strokeWidth={2}
+                pointerEvents="none"
+                strokeDasharray="5,2"
+              />
+              <circle
+                cx={tooltipLeft - 1}
+                cy={tooltipTop + margin.top - 1}
+                r={4}
+                fill={"#6366f1"}
+                stroke="white"
+                strokeWidth={2}
+                pointerEvents="none"
+              />
+            </g>
+          )}
+        </svg>
+        {tooltipData && (
+          <div>
+            <TooltipWithBounds
+              key={Math.random()}
+              top={tooltipTop - 12 + margin.top}
+              left={
+                tooltipLeft + 150 > width - 30
+                  ? Math.max(0, width - 150) // Move to the left if going out on the right
+                  : tooltipLeft + 40
+              }
+              style={tooltipStyles}
+            >
+              <div className="max-w-[150px] overflow-auto whitespace-normal break-all">
+                <div className="text-sm">
+                  percentile: {getPercentile(tooltipData)}
+                </div>
+                <div className="text-sm">
+                  percentile: {getPercentileShaped(tooltipData)}
+                </div>
+                <div className="text-sm">value: {getValue(tooltipData)}</div>
+                <div className="text-sm">value: {getValueShaped(tooltipData)}</div>
+              </div>
+            </TooltipWithBounds>
+          </div>
+        )}
       </div>
     );
   }
