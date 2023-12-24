@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Icons } from "./icons";
 import { Selector, SelectorLabeled } from "./selector";
+import Image from "next/image";
 
 export function UserResultsTable({ resultsData, error }: any) {
   const LightBulb = Icons["lightBulb"];
@@ -82,7 +83,11 @@ export function UserResultsTable({ resultsData, error }: any) {
               <table className="w-full">
                 <tbody className="relative divide-y divide-gray-200">
                   {keys.map((key, index) => {
-                    if (key === "Preview" || key === "item_id" || key === "genre")
+                    if (
+                      key === "Preview" ||
+                      key === "item_id" ||
+                      key === "genre"
+                    )
                       return (
                         <tr
                           key={index}
@@ -97,9 +102,9 @@ export function UserResultsTable({ resultsData, error }: any) {
                               className={`p-4 border border-t-0 w-[18%]`}
                             >
                               {key === "Preview" && result[key] ? (
-                                <img
+                                <Image
                                   key={key}
-                                  src={result[key]}
+                                  src={`https://movielensmoviesimages.s3.us-east-2.amazonaws.com/posters/${item["item_id"]}.jpg`}
                                   alt={result["title"]}
                                   className="rounded-lg img-fluid min-w-full"
                                 />

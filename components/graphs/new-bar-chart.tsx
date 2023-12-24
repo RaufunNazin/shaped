@@ -68,9 +68,41 @@ const CustomBarChart = ({
           {data.map((d) => (
             <Bar
               key={d.alias}
-              x={margin.left + xScale(d.alias)!}
-              y={margin.top + yScale(d.value)}
-              height={yMax - yScale(d.value)}
+              x={margin.left + 10 + xScale(d.alias)!}
+              y={
+                (d.value / data[0].value) * 100 > 5
+                  ? margin.top + yScale(d.value)
+                  : (d.value / data[0].value) * 100 == 0
+                  ? yMax - margin.top
+                  : (d.value / data[0].value) * 100 <= 1
+                  ? yMax - margin.top + 5
+                  : (d.value / data[0].value) * 100 <= 2
+                  ? yMax - margin.top + 4
+                  : (d.value / data[0].value) * 100 <= 3
+                  ? yMax - margin.top + 3
+                  : (d.value / data[0].value) * 100 <= 4
+                  ? yMax - margin.top + 2
+                  : (d.value / data[0].value) * 100 <= 5
+                  ? yMax - margin.top + 1
+                  : yMax - margin.top
+              }
+              height={
+                (d.value / data[0].value) * 100 > 5
+                  ? yMax - yScale(d.value)
+                  : (d.value / data[0].value) * 100 == 0
+                  ? 0
+                  : (d.value / data[0].value) * 100 <= 1
+                  ? 1
+                  : (d.value / data[0].value) * 100 <= 2
+                  ? 2
+                  : (d.value / data[0].value) * 100 <= 3
+                  ? 3
+                  : (d.value / data[0].value) * 100 <= 4
+                  ? 4
+                  : (d.value / data[0].value) * 100 <= 5
+                  ? 5
+                  : 0
+              }
               width={xScale.bandwidth()}
               fill={d.color}
             />
@@ -78,7 +110,7 @@ const CustomBarChart = ({
           {xScale.domain().map((d) => (
             <g key={d}>
               <text
-                x={margin.left + 5 + xScale(d)! + xScale.bandwidth() / 2}
+                x={margin.left + 22 + xScale(d)! + xScale.bandwidth() / 2}
                 y={height - margin.bottom}
                 textAnchor="end"
                 dominantBaseline="middle"
@@ -94,7 +126,7 @@ const CustomBarChart = ({
             {tickValues.map((tick, index) => (
               <text
                 key={index}
-                x={margin.left - 10}
+                x={margin.left + 20}
                 y={yScale(tick) + margin.top}
                 textAnchor="end"
                 color="#4F4F4F"
@@ -102,7 +134,11 @@ const CustomBarChart = ({
                 dominantBaseline="middle"
                 fontSize={12}
               >
-                {chartTitle == "Coverage" ? `${tick * 100}%` : `${tick}`}
+                {tick < 1000
+                  ? tick
+                  : tick < 1000000
+                  ? `${tick / 1000}K`
+                  : `${tick / 1000000}M`}
               </text>
             ))}
           </g>

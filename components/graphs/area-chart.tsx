@@ -116,8 +116,8 @@ export default withTooltip<AreaProps, TooltipData>(
         if (index !== -1) {
           const d = data[index];
           setTargetPosition({
-            x: xScale(getName(d)) + margin.left + xScale.bandwidth() / 2,
-            y: yScale(getValue(d)) + margin.top,
+            x: xScale(getName(d)) + 3,
+            y: yScale(getValue(d)) + 3,
           });
         }
       }
@@ -165,8 +165,6 @@ export default withTooltip<AreaProps, TooltipData>(
               cy={targetPosition.y - 5}
               r={4}
               fill={stroke}
-              stroke="white"
-              strokeWidth={2}
               pointerEvents="none"
             />
           )}

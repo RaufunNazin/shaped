@@ -4,13 +4,11 @@ import { StackedChart, StackedChartWrapper } from "./graphs/stacked-chart";
 
 interface AreaProps {
   title: string;
-  data: { name: string; data: { x: string; y: number }[] }[];
+  data: any;
   chartType: "line" | "area";
   subtitle?: string;
-  percentiles: number[];
   width: number;
   height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
 }
 
 const InteractionLineChart = ({
@@ -18,7 +16,6 @@ const InteractionLineChart = ({
   data,
   chartType,
   subtitle,
-  percentiles,
   width,
   height,
 }: AreaProps) => {
@@ -29,7 +26,7 @@ const InteractionLineChart = ({
           <p className="my-2 bg-white text-xl font-bold text-black">{title}</p>
           <p className="text-sm text-gray-500">{subtitle ?? ""}</p>
         </div>
-        <div className="flex rounded-lg border">
+        {/* <div className="flex rounded-lg border">
           <div className="border-r py-1 pl-3 pr-7">
             <div className="text-gray-500">
               {chartType === "line" ? "1st Percentile" : "Bottom 20%"}
@@ -60,7 +57,8 @@ const InteractionLineChart = ({
             </div>
             <div className="text-xl font-bold">{percentiles[4]}</div>
           </div>
-        </div>
+        </div> */}
+        <div></div>
       </div>
       <StackedChartWrapper
         data={data}
