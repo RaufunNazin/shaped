@@ -2,33 +2,32 @@ import React, { useMemo, useState, useCallback, useRef } from "react";
 import { Group } from "@visx/group";
 import { Circle } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
-import genRandomNormalPoints, {
-  PointsRange,
-} from "@visx/mock-data/lib/generators/genRandomNormalPoints";
 import { withTooltip, Tooltip } from "@visx/tooltip";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
 import { localPoint } from "@visx/event";
 
-const points: PointsRange[] = genRandomNormalPoints(3000);
-
-const x = (d: PointsRange) => d[0];
-const y = (d: PointsRange) => d[1];
+const x = (d: any) => d[0];
+const y = (d: any) => d[1];
 
 export type DotsProps = {
   width: number;
   height: number;
+  embeddings: { name: string | number; data: [number, number][] }[];
+  dataType: string;
 };
 
-const Dots: React.FC<DotsProps & WithTooltipProvidedProps<PointsRange>> = ({
+const Dots: React.FC<DotsProps & WithTooltipProvidedProps<any>> = ({
   width,
   height,
+  embeddings,
+  dataType,
   hideTooltip,
   showTooltip,
   tooltipOpen,
   tooltipData,
   tooltipLeft,
   tooltipTop,
-}: DotsProps & WithTooltipProvidedProps<PointsRange>) => {
+}: DotsProps & WithTooltipProvidedProps<any>) => {
   const margin = { top: 10, right: 10, bottom: 10, left: 10 };
 
   const svgWidth = width - margin.left - margin.right;
@@ -62,7 +61,7 @@ const Dots: React.FC<DotsProps & WithTooltipProvidedProps<PointsRange>> = ({
       const point = localPoint(svgRef.current, event);
       if (!point) return;
 
-      const closest = points.reduce((prev, curr) => {
+      const closest = embeddings?.data?.reduce((prev, curr) => {
         const distancePrev = Math.hypot(
           xScale(x(prev)) - point.x,
           yScale(y(prev)) - point.y
@@ -80,11 +79,13 @@ const Dots: React.FC<DotsProps & WithTooltipProvidedProps<PointsRange>> = ({
         tooltipData: closest,
       });
     },
-    [xScale, yScale, showTooltip]
+    [embeddings.data, showTooltip, xScale, yScale]
   );
   const handleMouseLeave = useCallback(() => {
     hideTooltip();
   }, [hideTooltip]);
+
+  console.log(tooltipData);
 
   if (svgWidth < 10 || svgHeight < 10) return null;
 
@@ -102,7 +103,19 @@ const Dots: React.FC<DotsProps & WithTooltipProvidedProps<PointsRange>> = ({
           onTouchEnd={handleMouseLeave}
         />
         <Group pointerEvents="none">
-          {points.map((point, i) => (
+          {/* {
+          ["Numerical", "Timestamp"].includes(dataType)
+            ? (embeddings.map((e) => ({
+                ...e,
+                data: e.data.map((d) => ({
+                  x: d[0],
+                  y: d[1],
+                  fillColor: getColor(e.name),
+                })),
+              })) as any)
+            : embeddings
+        } */}
+          {embeddings?.data?.map((point, i) => (
             <Circle
               key={`point-${point[0]}-${i}`}
               className="dot"
@@ -120,10 +133,10 @@ const Dots: React.FC<DotsProps & WithTooltipProvidedProps<PointsRange>> = ({
         tooltipTop != null && (
           <Tooltip left={tooltipLeft + 10} top={tooltipTop + 10}>
             <div>
-              <strong>x:</strong> {x(tooltipData)}
+              <strong>x:</strong>
             </div>
             <div>
-              <strong>y:</strong> {y(tooltipData)}
+              <strong>y:</strong>
             </div>
           </Tooltip>
         )}

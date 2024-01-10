@@ -25,7 +25,6 @@ import AreaChart from "@/components/graphs/area-chart";
 import InteractionAreachart from "@/components/interaction-area-chart";
 import moment from "moment";
 import InteractionLineChart from "@/components/interaction-line-chart";
-import ScatterChart from "@/components/graphs/scatter-chart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -202,110 +201,216 @@ const Page = () => {
       score: 0.9837,
     },
   ];
-  const interactionAreachartData = [
-    { name: "2012-04-30T07:00:00.000Z", value: 80 },
-    { name: "2012-04-29T07:00:00.000Z", value: 50 },
-    { name: "2012-04-28T07:00:00.000Z", value: 45 },
-    { name: "2012-04-27T07:00:00.000Z", value: 43 },
-    { name: "2012-04-26T07:00:00.000Z", value: 38 },
-    { name: "2012-04-25T07:00:00.000Z", value: 35 },
-    { name: "2012-04-24T07:00:00.000Z", value: 31 },
-    { name: "2012-04-23T07:00:00.000Z", value: 27 },
-    { name: "2012-04-22T07:00:00.000Z", value: 25 },
-    { name: "2012-04-21T07:00:00.000Z", value: 22 },
-    { name: "2012-04-20T07:00:00.000Z", value: 18 },
-    { name: "2012-04-19T07:00:00.000Z", value: 16 },
-    { name: "2012-04-18T07:00:00.000Z", value: 14 },
-    { name: "2012-04-17T07:00:00.000Z", value: 13 },
-    { name: "2012-04-16T07:00:00.000Z", value: 12 },
-    { name: "2012-04-15T07:00:00.000Z", value: 10 },
-    { name: "2012-04-14T07:00:00.000Z", value: 8 },
-    { name: "2012-04-13T07:00:00.000Z", value: 5 },
-    { name: "2012-04-12T07:00:00.000Z", value: 3 },
-    { name: "2012-04-11T07:00:00.000Z", value: 1 },
-  ];
-  const interactionLinechartData = [
-    {
-      name: "line1",
-      data: [
-        { x: "2020-01-01", y: 0 },
-        { x: "2020-01-02", y: 100 },
-        { x: "2020-01-03", y: 130 },
-        { x: "2020-01-04", y: 140 },
-        { x: "2020-01-05", y: 130 },
-        { x: "2020-01-06", y: 160 },
-        { x: "2020-01-07", y: 179 },
-        { x: "2020-01-08", y: 190 },
-        { x: "2020-01-09", y: 195 },
-        { x: "2020-01-10", y: 200 },
-      ],
-      color: "#818CF8",
-    },
-    {
-      name: "line2",
-      data: [
-        { x: "2020-01-01", y: 10 },
-        { x: "2020-01-02", y: 60 },
-        { x: "2020-01-03", y: 30 },
-        { x: "2020-01-04", y: 70 },
-        { x: "2020-01-05", y: 20 },
-        { x: "2020-01-06", y: 80 },
-        { x: "2020-01-07", y: 40 },
-        { x: "2020-01-08", y: 10 },
-        { x: "2020-01-09", y: 70 },
-        { x: "2020-01-10", y: 30 },
-      ],
-      color: "#FBBF24",
-    },
-    {
-      name: "line3",
-      data: [
-        { x: "2020-01-01", y: 50 },
-        { x: "2020-01-02", y: 20 },
-        { x: "2020-01-03", y: 60 },
-        { x: "2020-01-04", y: 30 },
-        { x: "2020-01-05", y: 80 },
-        { x: "2020-01-06", y: 10 },
-        { x: "2020-01-07", y: 40 },
-        { x: "2020-01-08", y: 20 },
-        { x: "2020-01-09", y: 90 },
-        { x: "2020-01-10", y: 10 },
-      ],
-      color: "#2DD4BF",
-    },
-    {
-      name: "line4",
-      data: [
-        { x: "2020-01-01", y: 30 },
-        { x: "2020-01-02", y: 50 },
-        { x: "2020-01-03", y: 10 },
-        { x: "2020-01-04", y: 40 },
-        { x: "2020-01-05", y: 70 },
-        { x: "2020-01-06", y: 20 },
-        { x: "2020-01-07", y: 60 },
-        { x: "2020-01-08", y: 30 },
-        { x: "2020-01-09", y: 80 },
-        { x: "2020-01-10", y: 40 },
-      ],
-      color: "#F472B6",
-    },
-    {
-      name: "line5",
-      data: [
-        { x: "2020-01-01", y: 20 },
-        { x: "2020-01-02", y: 70 },
-        { x: "2020-01-03", y: 40 },
-        { x: "2020-01-04", y: 80 },
-        { x: "2020-01-05", y: 30 },
-        { x: "2020-01-06", y: 60 },
-        { x: "2020-01-07", y: 10 },
-        { x: "2020-01-08", y: 50 },
-        { x: "2020-01-09", y: 30 },
-        { x: "2020-01-10", y: 70 },
-      ],
-      color: "#38BDF8",
-    },
-  ];
+  const interactionAreachartData = {
+    day1: [
+      {
+        itemId: "ijFX4J8l2OHtjkBEVDu1",
+        count: 1,
+        percentile: 100,
+      },
+      {
+        itemId: "2n70AoyPsdHYhw4QR6sK",
+        count: 1,
+        percentile: 4,
+      },
+      {
+        itemId: "DsRiwpa8VKvh13jiqz20",
+        count: 1,
+        percentile: 2,
+      },
+      {
+        itemId: "MzHgOL7IwmiPtFyffWrk",
+        count: 2,
+        percentile: 1,
+      },
+      {
+        itemId: "Dm5GoKb9gHkMUd9sIP5H",
+        count: 8,
+        percentile: 1,
+      },
+    ],
+    day2: [
+      {
+        itemId: "0KzzwSEkTYBIn36Yo6XN",
+        count: 1,
+        percentile: 100,
+      },
+      {
+        itemId: "eVLtubkrSDSrIsLoVVbJ",
+        count: 1,
+        percentile: 4,
+      },
+      {
+        itemId: "fOCA455o8pGzpJIDQRYc",
+        count: 1,
+        percentile: 2,
+      },
+      {
+        itemId: "6FnANUmeWK8XWWZiccn6",
+        count: 1,
+        percentile: 1,
+      },
+      {
+        itemId: "ybKorngMA1SpmIIDZI3u",
+        count: 12,
+        percentile: 1,
+      },
+    ],
+    day3: [
+      {
+        itemId: "rSjUGd7hGa6MAskLwxEn",
+        count: 1,
+        percentile: 105,
+      },
+      {
+        itemId: "o7pJ26QKqogV8Ni8iEgo",
+        count: 1,
+        percentile: 4,
+      },
+      {
+        itemId: "gufqgrdTH9P3dLVVPQkb",
+        count: 1,
+        percentile: 2,
+      },
+      {
+        itemId: "3hSLIlQtqyev5hhQrxlF",
+        count: 1,
+        percentile: 1,
+      },
+      {
+        itemId: "qYBmptu648c6JKcIQnhj",
+        count: 13,
+        percentile: 1,
+      },
+    ],
+    day4: [
+      {
+        itemId: "PQeGQbRH6p6mUoxByPDc",
+        count: 1,
+        percentile: 104,
+      },
+      {
+        itemId: "P0wbGY2ncxg5i7eT0JN2",
+        count: 1,
+        percentile: 4,
+      },
+      {
+        itemId: "LdEshiosLUU5RFXKaoyb",
+        count: 1,
+        percentile: 2,
+      },
+      {
+        itemId: "8e7siHBV9Zm6b6zAhNXq",
+        count: 1,
+        percentile: 1,
+      },
+      {
+        itemId: "daBuMq0AGaB1p49tUCwX",
+        count: 5,
+        percentile: 1,
+      },
+    ],
+    day5: [
+      {
+        itemId: "VefC44LnWnixAeWO6zYM",
+        count: 1,
+        percentile: 105,
+      },
+      {
+        itemId: "FCzJXL9LRkPceTCainyG",
+        count: 1,
+        percentile: 4,
+      },
+      {
+        itemId: "fw6R33UJHsitLm3KJqdM",
+        count: 1,
+        percentile: 2,
+      },
+      {
+        itemId: "qBqyrrWI7VnP7Ya7wV6L",
+        count: 1,
+        percentile: 1,
+      },
+      {
+        itemId: "X8Utg4xUJvtAtr96w6Ib",
+        count: 6,
+        percentile: 1,
+      },
+    ],
+    day6: [
+      {
+        itemId: "s24SqS70ACm8pVDIrV40",
+        count: 1,
+        percentile: 105,
+      },
+      {
+        itemId: "MqyqODsIovZa2KjRF9xx",
+        count: 1,
+        percentile: 4,
+      },
+      {
+        itemId: "tOGXhJF6spKBmkdXigUU",
+        count: 1,
+        percentile: 2,
+      },
+      {
+        itemId: "jruykahfp2YDGdRIZ2jU",
+        count: 1,
+        percentile: 1,
+      },
+      {
+        itemId: "8m3wPQDk5dVIssM6n1h4",
+        count: 7,
+        percentile: 1,
+      },
+    ],
+    day7: [],
+  };
+  const interactionLinechartData = {
+    day1: [
+      { itemId: "ijFX4J8l2OHtjkBEVDu1", count: 1, percentile: 1 },
+      { itemId: "2n70AoyPsdHYhw4QR6sK", count: 1, percentile: 25 },
+      { itemId: "DsRiwpa8VKvh13jiqz20", count: 1, percentile: 50 },
+      { itemId: "MzHgOL7IwmiPtFyffWrk", count: 2, percentile: 75 },
+      { itemId: "Dm5GoKb9gHkMUd9sIP5H", count: 8, percentile: 99 },
+    ],
+    day2: [
+      { itemId: "0KzzwSEkTYBIn36Yo6XN", count: 1, percentile: 1 },
+      { itemId: "eVLtubkrSDSrIsLoVVbJ", count: 1, percentile: 25 },
+      { itemId: "fOCA455o8pGzpJIDQRYc", count: 1, percentile: 50 },
+      { itemId: "6FnANUmeWK8XWWZiccn6", count: 1, percentile: 75 },
+      { itemId: "ybKorngMA1SpmIIDZI3u", count: 12, percentile: 99 },
+    ],
+    day3: [
+      { itemId: "rSjUGd7hGa6MAskLwxEn", count: 1, percentile: 1 },
+      { itemId: "o7pJ26QKqogV8Ni8iEgo", count: 1, percentile: 25 },
+      { itemId: "gufqgrdTH9P3dLVVPQkb", count: 1, percentile: 50 },
+      { itemId: "3hSLIlQtqyev5hhQrxlF", count: 1, percentile: 75 },
+      { itemId: "qYBmptu648c6JKcIQnhj", count: 13, percentile: 99 },
+    ],
+    day4: [
+      { itemId: "PQeGQbRH6p6mUoxByPDc", count: 1, percentile: 1 },
+      { itemId: "P0wbGY2ncxg5i7eT0JN2", count: 1, percentile: 25 },
+      { itemId: "LdEshiosLUU5RFXKaoyb", count: 1, percentile: 50 },
+      { itemId: "8e7siHBV9Zm6b6zAhNXq", count: 1, percentile: 75 },
+      { itemId: "daBuMq0AGaB1p49tUCwX", count: 5, percentile: 99 },
+    ],
+    day5: [
+      { itemId: "VefC44LnWnixAeWO6zYM", count: 1, percentile: 1 },
+      { itemId: "FCzJXL9LRkPceTCainyG", count: 1, percentile: 25 },
+      { itemId: "fw6R33UJHsitLm3KJqdM", count: 1, percentile: 50 },
+      { itemId: "qBqyrrWI7VnP7Ya7wV6L", count: 1, percentile: 75 },
+      { itemId: "X8Utg4xUJvtAtr96w6Ib", count: 6, percentile: 99 },
+    ],
+    day6: [
+      { itemId: "s24SqS70ACm8pVDIrV40", count: 1, percentile: 1 },
+      { itemId: "MqyqODsIovZa2KjRF9xx", count: 1, percentile: 25 },
+      { itemId: "tOGXhJF6spKBmkdXigUU", count: 1, percentile: 50 },
+      { itemId: "jruykahfp2YDGdRIZ2jU", count: 1, percentile: 75 },
+      { itemId: "8m3wPQDk5dVIssM6n1h4", count: 7, percentile: 99 },
+    ],
+    day7: [],
+  };
   const [data, setData] = useState({
     userAttributes: {
       user_id: "459907",
@@ -967,16 +1072,18 @@ const Page = () => {
                 </Button>
               </div>
             </div>
-            <div className="px-5 flex justify-center mb-20 bg-blue-50">
-              <ScatterChart height={500} width={1000} />
-            </div>
+
             <div className="px-5" ref={interactionLineRef}>
               <InteractionLineChart
                 title="Interaction growth"
-                data={interactionLinechartData}
+                data={Object.keys(interactionLinechartData).map((day) => {
+                  const dayData = interactionLinechartData[day].map(
+                    ({ percentile, count }) => ({ percentile, count })
+                  );
+                  return { name: day, data: dayData };
+                })}
                 chartType="line"
                 subtitle={`Count of interactions since item was created`}
-                percentiles={[8, 22, 44, 64, 78]}
                 height={500}
                 width={interactionLinechartWidth}
               />
@@ -1048,7 +1155,7 @@ const Page = () => {
                 />
               </div>
             </div>
-            <div className="px-5" ref={interactionRef}>
+            {/* <div className="px-5" ref={interactionRef}>
               <InteractionAreachart
                 title="Interaction frequencies"
                 data={interactionAreachartData}
@@ -1058,7 +1165,7 @@ const Page = () => {
                 height={500}
                 width={interactionAreachartWidth}
               />
-            </div>
+            </div> */}
           </div>
         </DashboardTableWrapper>
 

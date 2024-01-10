@@ -57,3 +57,7 @@ input[type="number"] {
   border-radius: 8px; /* Make the thumb rounded */
   height: 6px; /* Set the height of the track */
 }
+
+#chart .apexcharts-tooltip .apexcharts-tooltip-series-group .apexcharts-tooltip-marker-line {
+  display: none !important;
+}

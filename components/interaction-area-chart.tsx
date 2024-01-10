@@ -3,7 +3,7 @@ import AreaChart from "./graphs/area-chart";
 
 interface AreaProps {
   title: string;
-  data: { name: string; value: number }[];
+  data: any;
   subtitle?: string;
   percentiles: number[];
   item: string;
