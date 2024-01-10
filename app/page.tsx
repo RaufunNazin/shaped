@@ -25,6 +25,7 @@ import AreaChart from "@/components/graphs/area-chart";
 import InteractionAreachart from "@/components/interaction-area-chart";
 import moment from "moment";
 import InteractionLineChart from "@/components/interaction-line-chart";
+import ScatterChart from "@/components/graphs/scatter-chart";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -966,7 +967,9 @@ const Page = () => {
                 </Button>
               </div>
             </div>
-
+            <div className="px-5 flex justify-center mb-20 bg-blue-50">
+              <ScatterChart height={500} width={1000} />
+            </div>
             <div className="px-5" ref={interactionLineRef}>
               <InteractionLineChart
                 title="Interaction growth"

@@ -9,9 +9,7 @@ import { withTooltip, Tooltip } from "@visx/tooltip";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
 import { localPoint } from "@visx/event";
 
-const points: PointsRange[] = genRandomNormalPoints(600).filter(
-  ([x, y]) => x >= 0 && y >= 0
-);
+const points: PointsRange[] = genRandomNormalPoints(3000);
 
 const x = (d: PointsRange) => d[0];
 const y = (d: PointsRange) => d[1];
