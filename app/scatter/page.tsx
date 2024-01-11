@@ -97,75 +97,44 @@ const Page = () => {
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
+      className="flex justify-center items-center"
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <h1>Scatter Chart</h1>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <ScatterChart
-            data={data}
-            width={maxX}
-            height={maxY}
-            selectedCategory={selectedCategory}
-          />
-        </div>
+      <div>
+        <ScatterChart
+          data={data}
+          width={maxX}
+          height={maxY}
+          selectedCategory={selectedCategory}
+        />
       </div>
       <div
-        style={{ marginTop: "2px", marginLeft: "50px", textAlign: "center" }}
+        className="my-2 ml-12 text-center"
       >
-        <button
-          onClick={() => setSelectedCategory("")}
-          style={{
-            display: "block",
-            marginTop: "10px",
-            padding: "5px 10px",
-            backgroundColor: "lightgray",
-            color: "black",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          All Category
+        <button onClick={() => setSelectedCategory("")}>
+          <div className="flex items-center">
+            <div
+              className="w-4 h-4 rounded-full mr-2"
+              style={{ backgroundColor: "lightgray" }}
+            ></div>
+            <div>All Categories</div>
+          </div>
         </button>
-        {data.map((category) => (
-          <button
-            key={category.name}
-            onClick={() => setSelectedCategory(category.name)}
-            style={{
-              display: "block",
-              marginTop: "10px",
-              padding: "5px 10px",
-              backgroundColor: category.color,
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            {category.name}
-          </button>
-        ))}
+        <div className="flex flex-col gap-y-2">
+          {data.map((category) => (
+            <button
+              key={category.name}
+              onClick={() => setSelectedCategory(category.name)}
+            >
+              <div className="flex items-center">
+                <div
+                  className="w-4 h-4 rounded-full mr-2"
+                  style={{ backgroundColor: category.color }}
+                ></div>
+                <div>{category.name}</div>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
