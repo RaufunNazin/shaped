@@ -1,230 +1,362 @@
 "use client";
-import React, { useState } from "react";
-import { interpolateRainbow } from "d3-scale-chromatic";
+import React, { useEffect, useMemo, useState } from "react";
 import { Zoom } from "@visx/zoom";
 import { localPoint } from "@visx/event";
 import { RectClipPath } from "@visx/clip-path";
-import genPhyllotaxis, {
-  GenPhyllotaxisFunction,
-  PhyllotaxisPoint,
-} from "@visx/mock-data/lib/generators/genPhyllotaxis";
+import moment, { Moment } from "moment";
 import { scaleLinear } from "@visx/scale";
 
-const bg = "#0a0a0a";
-interface Point {
-  x: number;
-  y: number;
+interface EmbeddingChartProps {
+  data: { name: string | number; data: [number, number][] }[];
+  dataType: string;
+  colors: string[];
 }
 
-const initialTransform = {
-  scaleX: 1,
-  scaleY: 1,
-  translateX: 0,
-  translateY: 0,
-  skewX: 0,
-  skewY: 0,
-};
-
-interface Category {
-  name: string;
-  points: Point[];
-  color: string;
+interface ColorMapping {
+  [name: string]: string;
 }
 
-interface ScatterChartProps {
-  data: Category[];
-  width: number;
-  height: number;
-  selectedCategory?: string;
-}
+const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
+  const width = 960;
+  const height = 600;
+  const [hoveredPoint, setHoveredPoint] = useState<any>(null);
+  const [filteredData, setFilteredData] = useState<any>([]);
+  const [selectedCategory, setSelectedCategory] = useState(["", ""]);
+  const colorMapping: ColorMapping = {};
+  const padding = 20;
 
-const ScatterChart: React.FC<ScatterChartProps> = ({
-  data,
-  width,
-  height,
-  selectedCategory,
-}) => {
-  const padding = 30;
-
-  const pointsToDisplay = selectedCategory
-    ? data.find((category) => category.name === selectedCategory)?.points || []
-    : data.reduce(
-        (points, category) => [...points, ...category.points],
-        [] as Point[]
-      );
-
-  const maxX = Math.max(...pointsToDisplay.map((point) => point.x));
-  const maxY = Math.max(...pointsToDisplay.map((point) => point.y));
-
-  const scaleX = (value: number) => (value / maxX) * (width - 60);
-  const scaleY = (value: number) => height - (value / maxY) * (height - 40);
-
-  const [hoveredPoint, setHoveredPoint] = useState<Point | null>(null);
-  const [showMiniMap, setShowMiniMap] = useState<boolean>(true);
-
-  const handlePointHover = (point: Point) => {
-    setHoveredPoint(point);
+  const initialTransform = {
+    scaleX: 1,
+    scaleY: 1,
+    translateX: 0,
+    translateY: 0,
+    skewX: 0,
+    skewY: 0,
   };
 
-  const findClosestPoint = (mousePoint: any, points: any) => {
-    let closestPoint = null;
-    let minDistance = Number.MAX_VALUE;
-
-    points.forEach((point: any) => {
-      const distance = Math.sqrt(
-        Math.pow(mousePoint.x - scaleX(point.x), 2) +
-          Math.pow(mousePoint.y - scaleY(point.y), 2)
-      );
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestPoint = point;
-      }
-    });
-
-    return closestPoint;
+  const handlePointHover = (point: any, value: any) => {
+    setHoveredPoint({ point: point, value: value });
   };
+
+  const [min, max] = useMemo(() => {
+    const values = data.map((e: any) => e.name);
+    if (dataType == "Numerical") {
+      return [
+        Math.min(...(values as number[])),
+        Math.max(...(values as number[])),
+      ];
+    } else if (dataType == "Timestamp") {
+      const dates = values.map((dateString: any) => moment(dateString));
+      return [moment.min(dates), moment.max(dates)];
+    } else return [undefined, undefined];
+  }, [data, dataType]);
+
+  const getColor = (value: number | string): string => {
+    let normalizedValue;
+    if (dataType === "Timestamp") {
+      normalizedValue =
+        ((moment(value).diff(min) as number) - 0) /
+        ((max as Moment).diff(min as Moment) - 0);
+    } else {
+      normalizedValue =
+        ((value as number) - (min as number)) /
+        ((max as number) - (min as number));
+    }
+
+    const redChannel = Math.round(255 - normalizedValue * 255);
+    return `rgba(${redChannel}, 0, 0, 0.8)`;
+  };
+
+  const getColorByCategory = (name: string | number): string => {
+    if (!(name in colorMapping)) {
+      colorMapping[name] =
+        colors[Object.keys(colorMapping).length % colors.length];
+    }
+    return colorMapping[name];
+  };
+
+  const categoriesColor = (name: string | number): string => {
+    if (!(name in colorMapping)) {
+      colorMapping[name] =
+        colors[Object.keys(colorMapping).length % colors.length];
+    }
+    return colorMapping[name];
+  };
+
+  const [horizontalLines, verticalLines] = useMemo(() => {
+    const horizontalLines: {
+      x1: number;
+      x2: number;
+      y1: number;
+      y2: number;
+    }[] = [];
+    const verticalLines: { x1: number; x2: number; y1: number; y2: number }[] =
+      [];
+    const squareSize = 60;
+    for (let i = 0; i < height / squareSize; i++) {
+      horizontalLines.push({
+        x1: 0,
+        y1: i * squareSize,
+        x2: width,
+        y2: i * squareSize,
+      });
+    }
+    for (let i = 0; i < width / squareSize; i++) {
+      verticalLines.push({
+        x1: i * squareSize,
+        y1: 0,
+        x2: i * squareSize,
+        y2: height,
+      });
+    }
+    return [horizontalLines, verticalLines];
+  }, [width, height]);
+
+  const [minX, minY, maxX, maxY] = useMemo(() => {
+    const minX = Math.min(
+      ...data.flatMap((d: any) => d.data.map((d1: [number, number]) => d1[0]))
+    );
+    const minY = Math.min(
+      ...data.flatMap((d: any) => d.data.map((d1: [number, number]) => d1[1]))
+    );
+    const maxX = Math.max(
+      ...data.flatMap((d: any) => d.data.map((d1: [number, number]) => d1[0]))
+    );
+    const maxY = Math.max(
+      ...data.flatMap((d: any) => d.data.map((d1: [number, number]) => d1[1]))
+    );
+
+    return [minX, minY, maxX, maxY];
+  }, [data]);
+
+  const xScale = useMemo(
+    () =>
+      scaleLinear({
+        range: [padding, width - padding],
+        domain: [minX, maxX],
+        nice: true,
+      }),
+    [width, minX, maxX]
+  );
+  const yScale = useMemo(
+    () =>
+      scaleLinear({
+        range: [padding, height - padding],
+        domain: [maxY, minY],
+        nice: true,
+      }),
+    [height, minY, maxY]
+  );
+
+  useEffect(() => {
+    if (selectedCategory[0] === "") setFilteredData(data);
+    else setFilteredData([data.find((d) => d.name === selectedCategory[0])]);
+  }, [data, selectedCategory]);
 
   return (
-    <Zoom<SVGSVGElement>
-      width={width}
-      height={height}
-      scaleXMin={1 / 2}
-      scaleXMax={4}
-      scaleYMin={1 / 2}
-      scaleYMax={4}
-      initialTransformMatrix={initialTransform}
-    >
-      {(zoom) => (
-        <div className="relative">
-          <svg
-            width={width}
-            height={height}
-            style={{
-              touchAction: "none",
-            }}
-            ref={zoom.containerRef}
-          >
-            <RectClipPath id="zoom-clip" width={width} height={height} />
-            <rect width={width} height={height} rx={14} fill="none" />
-            <g transform={zoom.toString()}>
-              {pointsToDisplay.map((point, index) => (
-                <g key={index}>
-                  <circle
-                    cx={scaleX(point.x) + 2}
-                    cy={scaleY(point.y) - 5}
-                    r={2}
-                    fill={
-                      data.find((category) => category.points.includes(point))
-                        ?.color || "black"
-                    }
-                    onMouseEnter={() => handlePointHover(point)}
-                    onMouseLeave={() => setHoveredPoint(null)}
-                  />
-                </g>
-              ))}
-            </g>
-            <rect
+    <div className="flex flex-row gap-x-4">
+      <Zoom<SVGSVGElement>
+        width={width}
+        height={height}
+        scaleXMin={1 / 4}
+        scaleXMax={4}
+        scaleYMin={1 / 4}
+        scaleYMax={4}
+        initialTransformMatrix={initialTransform}
+      >
+        {(zoom) => (
+          <div className="relative">
+            <svg
               width={width}
               height={height}
-              rx={14}
-              fill="transparent"
-              onMouseEnter={(event) => {
-                const point = localPoint(event);
-                if (point) {
-                  const closestPoint = findClosestPoint(point, pointsToDisplay);
-                  setHoveredPoint(closestPoint);
-                }
+              style={{
+                touchAction: "none",
+                border: "1px solid lightgray",
+                borderRadius: "4px",
               }}
-              onMouseLeave={() => {
-                if (zoom.isDragging) zoom.dragEnd();
-                setHoveredPoint(null);
-              }}
-              onTouchStart={zoom.dragStart}
-              onTouchMove={zoom.dragMove}
-              onTouchEnd={zoom.dragEnd}
-              onMouseDown={zoom.dragStart}
-              onMouseMove={(event) => {
-                const point = localPoint(event);
-                if (point) {
-                  // Find the closest point
-                  const closestPoint = findClosestPoint(point, pointsToDisplay);
-                  setHoveredPoint(closestPoint);
-                }
-                zoom.dragMove;
-              }}
-              onMouseUp={zoom.dragEnd}
-              onDoubleClick={(event) => {
-                const point = localPoint(event) || { x: 0, y: 0 };
-                zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
-              }}
-            />
-            {hoveredPoint && (
-              <g>
-                <rect
-                  x={scaleX(hoveredPoint.x) + 5}
-                  // y={height - scaleY(hoveredPoint.y) - 30}
-                  y={scaleY(hoveredPoint.y) - 35}
-                  width={60}
-                  height={30}
-                  fill="black"
-                  stroke="black"
-                />
-                <text
-                  x={scaleX(hoveredPoint.x) + 40}
-                  y={scaleY(hoveredPoint.y) - 25}
-                  fill="white"
-                  fontSize="10"
-                >
-                  <tspan
-                    x={scaleX(hoveredPoint.x) + 10}
-                  >{`x: ${hoveredPoint.x.toFixed(2)}`}</tspan>
-                  <tspan
-                    x={scaleX(hoveredPoint.x) + 10}
-                    dy="12"
-                  >{`y: ${hoveredPoint.y.toFixed(2)}`}</tspan>
-                </text>
-              </g>
-            )}
-            {showMiniMap && (
-              <g
-                clipPath="url(#zoom-clip)"
-                transform={`
-                    scale(0.25)
-                    translate(${width * 4 - width - 60}, ${
-                  height * 4 - height - 60
-                })
-                  `}
-              >
-                <rect width={width} height={height} fill="#1a1a1a" />
-                {pointsToDisplay.map((point, index) => (
-                  <g key={index}>
-                    <circle
-                      cx={scaleX(point.x) + 2}
-                      cy={scaleY(point.y) - 5}
-                      r={2}
-                      fill={
-                        data.find((category) => category.points.includes(point))
-                          ?.color || "black"
+              ref={zoom.containerRef}
+            >
+              <RectClipPath id="zoom-clip" width={width} height={height} />
+              <rect width={width} height={height} rx={14} fill="none" />
+
+              <rect
+                width={width}
+                height={height}
+                rx={14}
+                fill="transparent"
+                onMouseLeave={() => {
+                  if (zoom.isDragging) zoom.dragEnd();
+                }}
+                onTouchStart={zoom.dragStart}
+                onTouchMove={zoom.dragMove}
+                onTouchEnd={zoom.dragEnd}
+                onMouseDown={zoom.dragStart}
+                onMouseMove={zoom.dragMove}
+                onMouseUp={zoom.dragEnd}
+                onDoubleClick={(event) => {
+                  const point = localPoint(event) || { x: 0, y: 0 };
+                  zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
+                }}
+              />
+              {horizontalLines.map((point, i) => {
+                return (
+                  <line
+                    key={i}
+                    {...point}
+                    strokeWidth={1}
+                    stroke="#000000"
+                    strokeOpacity={0.1}
+                  />
+                );
+              })}
+              {verticalLines.map((point, i) => {
+                return (
+                  <line
+                    key={i}
+                    {...point}
+                    strokeWidth={1}
+                    stroke="#000000"
+                    strokeOpacity={0.1}
+                  />
+                );
+              })}
+              <g transform={zoom.toString()}>
+                {filteredData.map((point: any, i: number) => (
+                  <g key={i}>
+                    {point.data.map(
+                      (dataPoint: [number, number], dataIndex: number) => {
+                        return (
+                          <circle
+                            key={dataIndex}
+                            cx={xScale(dataPoint[0])}
+                            cy={yScale(dataPoint[1])}
+                            r={3}
+                            fill={
+                              selectedCategory[1] !== ""
+                                ? selectedCategory[1]
+                                : ["Numerical", "Timestamp"].includes(dataType)
+                                ? getColor(point.name)
+                                : getColorByCategory(point.name)
+                            }
+                            fillOpacity={0.6}
+                            strokeWidth={1}
+                            stroke={
+                              selectedCategory[1] !== ""
+                                ? selectedCategory[1]
+                                : ["Numerical", "Timestamp"].includes(dataType)
+                                ? getColor(point.name)
+                                : getColorByCategory(point.name)
+                            }
+                            onMouseEnter={() => {
+                              handlePointHover(
+                                point.data[dataIndex],
+                                point.name
+                              );
+                            }}
+                            onMouseLeave={() => setHoveredPoint(null)}
+                          />
+                        );
                       }
-                    />
+                    )}
                   </g>
                 ))}
-                <rect
-                  width={width}
-                  height={height}
-                  fill="white"
-                  fillOpacity={0.2}
-                  stroke="white"
-                  strokeWidth={4}
-                  transform={zoom.toStringInvert()}
-                />
               </g>
-            )}
-          </svg>
-        </div>
-      )}
-    </Zoom>
+              {hoveredPoint && (
+                <foreignObject x={20} y={20} width="340" height="60">
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      padding: "10px",
+                      background: "white",
+                      border: "1px solid lightgray",
+                      borderRadius: "8px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      Attribute value:{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {hoveredPoint.value}
+                      </span>
+                    </div>
+                    <div>
+                      Embedding:{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {hoveredPoint.point[0]}, {hoveredPoint.point[1]}
+                      </span>
+                    </div>
+                  </div>
+                </foreignObject>
+              )}
+            </svg>
+            <div className="absolute right-3 top-3 flex flex-col items-center">
+              <div className="flex flex-col items-center rounded-md border border-gray-200 shadow-md">
+                <button
+                  type="button"
+                  className="px-2 py-1"
+                  onClick={() => zoom.scale({ scaleX: 1.2, scaleY: 1.2 })}
+                >
+                  +
+                </button>
+                <hr className="w-full bg-gray-200" />
+                <button
+                  type="button"
+                  className="px-2 py-1"
+                  onClick={() => zoom.scale({ scaleX: 0.8, scaleY: 0.8 })}
+                >
+                  -
+                </button>
+              </div>
+
+              <button
+                type="button"
+                className="mt-3 rounded-md border border-gray-200 px-1 py-2 text-sm shadow-md"
+                onClick={zoom.reset}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        )}
+      </Zoom>
+      <div className="flex flex-col gap-y-2">
+        {!["Numerical", "Timestamp"].includes(dataType) &&
+          data.length <= 20 && (
+            <div className="text-left text-[15px] font-bold">Legend</div>
+          )}
+        {!["Numerical", "Timestamp"].includes(dataType) &&
+          data.length <= 20 &&
+          data.map((category: any) => (
+            <div key={category.name} className="text-left">
+              <button
+                onClick={() => {
+                  if (selectedCategory[0] !== "") setSelectedCategory(["", ""]);
+                  else
+                    setSelectedCategory([
+                      category.name,
+                      categoriesColor(category.name),
+                    ]);
+                }}
+              >
+                <div className="flex items-center">
+                  <div
+                    className="mr-2 h-3 w-3 rounded-full"
+                    style={{
+                      backgroundColor: categoriesColor(category.name),
+                      opacity: 0.8,
+                    }}
+                  ></div>
+                  <div className="text-sm">{category.name}</div>
+                </div>
+              </button>
+            </div>
+          ))}
+      </div>{" "}
+    </div>
   );
 };
 

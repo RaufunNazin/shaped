@@ -1,141 +1,218 @@
 "use client";
 import React, { useState } from "react";
 import ScatterChart from "./(components)/ScatterChart";
+import EmbeddingsPlot from "@/components/embeddings-plot";
 
 const Page = () => {
-  const data = [
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const colors = [
+    "#4A90E2",
+    "#7FFFD4",
+    "#32CD32",
+    "#FFD700",
+    "#FF69B4",
+    "#20B2AA",
+    "#BA55D3",
+    "#87CEEB",
+    "#F08080",
+    "#00FA9A",
+    "#FFA07A",
+    "#6495ED",
+    "#8A2BE2",
+    "#5F9EA0",
+    "#FF8C00",
+    "#ADFF2F",
+    "#9932CC",
+    "#B0E0E6",
+    "#E6E6FA",
+    "#FF4500",
+  ];
+  const embeddings = [
     {
-      name: "Category A",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "red",
+      name: "technician",
+      data: [
+        [-0.24713075, -0.15127932],
+        [-0.25743463, 0.32565892],
+        [0.45635058, -0.16179015],
+      ],
     },
     {
-      name: "Category B",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "green",
+      name: "administrator",
+      data: [
+        [-0.2357197, -0.19209806],
+        [0.26549825, 0.57585757],
+        [-0.12623198, 0.33106627],
+        [0.00918755, -0.26114508],
+        [-0.3005011, -0.07562469],
+        [-0.15215122, -0.14502097],
+        [0.66751251, -0.04480664],
+        [0.7565135, -0.19118849],
+      ],
     },
     {
-      name: "Category C",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "blue",
+      name: "other",
+      data: [
+        [-0.19952424, 0.13473519],
+        [-0.40011889, -0.23887133],
+        [0.72305274, -0.38553628],
+        [-0.19742687, -0.00934304],
+        [-0.27958706, -0.12285549],
+        [-0.46132798, -0.08167874],
+        [0.06240615, 0.26667041],
+        [0.1904239, 0.2766407],
+        [-0.36256915, 0.0243132],
+        [0.48468193, 0.15971314],
+      ],
     },
     {
-      name: "Category D",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "orange",
+      name: "educator",
+      data: [
+        [0.38666687, 0.43736956],
+        [-0.23042912, 0.20540555],
+        [0.53680918, 0.27092949],
+        [-0.26843237, 0.01025964],
+        [0.58676147, -0.2857602],
+        [0.74316099, -0.32925644],
+      ],
     },
     {
-      name: "Category E",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "purple",
+      name: "scientist",
+      data: [
+        [-0.2180207, -0.20406951],
+        [0.10298492, -0.19301836],
+        [0.76150473, -0.26075333],
+        [-0.22135169, 0.12432399],
+        [-0.41545931, -0.21821291],
+        [-0.27989913, 0.28993156],
+      ],
     },
     {
-      name: "Category F",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "pink",
+      name: "engineer",
+      data: [
+        [-0.20891044, 0.34628839],
+        [-0.02860279, 0.26394204],
+        [-0.2207139, -0.38589312],
+        [-0.19689806, 0.1543259],
+        [-0.27584973, -0.4093044],
+        [-0.2454394, -0.09951929],
+      ],
     },
     {
-      name: "Category G",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "cyan",
+      name: "librarian",
+      data: [
+        [-0.3556154, -0.32538592],
+        [0.76921738, -0.21567288],
+        [0.02746097, 0.24064555],
+        [0.06890928, 0.36386851],
+        [-0.25627122, -0.24840746],
+        [0.23502545, 0.51008326],
+        [-0.31024943, -0.2721116],
+        [-0.27790212, -0.30515204],
+        [0.37404334, 0.39273233],
+        [-0.14531246, -0.42799753],
+        [-0.24922925, -0.10958268],
+        [-0.30160935, -0.16893248],
+        [-0.27434556, -0.20964089],
+        [0.15691182, 0.46763966],
+      ],
     },
     {
-      name: "Category H",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "brown",
+      name: "student",
+      data: [
+        [-0.33225523, 0.219689],
+        [-0.2873202, 0.24379299],
+        [-0.31433574, 0.11287236],
+        [-0.25216122, 0.17206115],
+        [-0.2993204, 0.08615466],
+        [0.10132228, 0.59701879],
+        [0.07883848, -0.12514835],
+        [0.31047929, -0.34541331],
+        [0.65829194, -0.37855739],
+      ],
     },
     {
-      name: "Category I",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "yellow",
+      name: "entertainment",
+      data: [
+        [-0.11293945, 0.10120366],
+        [0.09796192, -0.02712493],
+        [-0.40854524, -0.24892142],
+        [-0.02130631, 0.03176929],
+      ],
     },
     {
-      name: "Category J",
-      points: Array.from({ length: 1000 }, () => ({
-        x: Math.random() * 800,
-        y: Math.random() * 600,
-      })),
-      color: "gray",
+      name: "executive",
+      data: [
+        [0.39672968, -0.22168478],
+        [-0.32564707, 0.01397587],
+        [0.36459804, 0.38984017],
+        [0.07077845, 0.19814543],
+      ],
+    },
+    {
+      name: "programmer",
+      data: [
+        [-0.41906838, -0.272753],
+        [-0.42335142, -0.14345051],
+        [-0.21822767, 0.1573056],
+        [-0.01339611, 0.46629366],
+        [-0.00897731, 0.13460133],
+        [-0.26509387, -0.12322715],
+        [0.16145207, 0.01212321],
+        [-0.21195647, 0.28913062],
+        [-0.41871778, 0.04651123],
+      ],
+    },
+    {
+      name: "marketing",
+      data: [
+        [0.07143369, 0.15727301],
+        [-0.16591387, -0.37613297],
+        [0.14169027, -0.03572123],
+      ],
+    },
+    {
+      name: "salesman",
+      data: [[0.72835309, -0.16770223]],
+    },
+    {
+      name: "healthcare",
+      data: [[-0.23082251, 0.15393067]],
+    },
+    {
+      name: "lawyer",
+      data: [
+        [-0.42849125, -0.1336653],
+        [-0.46929076, -0.2804816],
+        [0.24686816, 0.21470738],
+      ],
+    },
+    {
+      name: "artist",
+      data: [
+        [0.41725792, -0.04935495],
+        [0.49133564, -0.09598815],
+      ],
+    },
+    {
+      name: "retired",
+      data: [[0.64158451, 0.09577932]],
+    },
+    {
+      name: "doctor",
+      data: [[0.73869333, -0.34277522]],
+    },
+    {
+      name: "homemaker",
+      data: [[-0.25534897, 0.03143153]],
     },
   ];
-
-  const [selectedCategory, setSelectedCategory] = useState("");
-
-  const allPoints = data.reduce(
-    (points, category) => [...points, ...category.points],
-    [] as { x: number; y: number }[]
-  );
-  const maxX = Math.max(...allPoints.map((point) => point.x));
-  const maxY = Math.max(...allPoints.map((point) => point.y));
-
   return (
-    <div
-      className="flex justify-center items-center"
-    >
-      <div>
-        <ScatterChart
-          data={data}
-          width={maxX}
-          height={maxY}
-          selectedCategory={selectedCategory}
-        />
-      </div>
-      <div
-        className="my-2 ml-12 text-center"
-      >
-        <button onClick={() => setSelectedCategory("")}>
-          <div className="flex items-center">
-            <div
-              className="w-4 h-4 rounded-full mr-2"
-              style={{ backgroundColor: "lightgray" }}
-            ></div>
-            <div>All Categories</div>
-          </div>
-        </button>
-        <div className="flex flex-col gap-y-2">
-          {data.map((category) => (
-            <button
-              key={category.name}
-              onClick={() => setSelectedCategory(category.name)}
-            >
-              <div className="flex items-center">
-                <div
-                  className="w-4 h-4 rounded-full mr-2"
-                  style={{ backgroundColor: category.color }}
-                ></div>
-                <div>{category.name}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="flex justify-center items-center">
+      <EmbeddingsPlot
+        embeddings={embeddings}
+        dataType="Category"
+        colors={colors}
+      />
     </div>
   );
 };
