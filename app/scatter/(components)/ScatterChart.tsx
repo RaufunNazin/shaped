@@ -262,7 +262,20 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
                 ))}
               </g>
               {hoveredPoint && (
-                <foreignObject x={20} y={20} width="340" height="60">
+                <foreignObject
+                  x={
+                    xScale(hoveredPoint.point[0]) + 350 > width - padding
+                      ? Math.max(0, width - 350)
+                      : xScale(hoveredPoint.point[0]) + 10
+                  }
+                  y={
+                    yScale(hoveredPoint.point[1]) - 70 < 0
+                      ? 10
+                      : yScale(hoveredPoint.point[1]) - 70
+                  }
+                  width="340"
+                  height="60"
+                >
                   <div
                     style={{
                       width: "100%",
@@ -294,10 +307,10 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
               )}
             </svg>
             <div className="absolute right-3 top-3 flex flex-col items-center">
-              <div className="flex flex-col items-center rounded-md border border-gray-200 shadow-md">
+              <div className="flex flex-col items-center rounded-md border bg-white border-gray-200 shadow-md">
                 <button
                   type="button"
-                  className="px-2 py-1"
+                  className="px-2 py-1 hover:bg-gray-200"
                   onClick={() => zoom.scale({ scaleX: 1.2, scaleY: 1.2 })}
                 >
                   +
@@ -309,16 +322,16 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
                   onClick={() => zoom.scale({ scaleX: 0.8, scaleY: 0.8 })}
                 >
                   -
+                </button>{" "}
+                <hr className="w-full bg-gray-200" />
+                <button
+                  type="button"
+                  className="px-2 py-1 hover:bg-gray-200git a"
+                  onClick={zoom.reset}
+                >
+                  Reset
                 </button>
               </div>
-
-              <button
-                type="button"
-                className="mt-3 rounded-md border border-gray-200 px-1 py-2 text-sm shadow-md"
-                onClick={zoom.reset}
-              >
-                Reset
-              </button>
             </div>
           </div>
         )}
