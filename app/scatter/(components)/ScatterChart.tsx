@@ -1,10 +1,15 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import { Zoom } from "@visx/zoom";
-import { localPoint } from "@visx/event";
-import { RectClipPath } from "@visx/clip-path";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import moment, { Moment } from "moment";
 import { scaleLinear } from "@visx/scale";
+import useSvgPanning from "@/hooks/use-svg-panning";
 
 interface EmbeddingChartProps {
   data: { name: string | number; data: [number, number][] }[];
@@ -19,20 +24,19 @@ interface ColorMapping {
 const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
   const width = 960;
   const height = 600;
+  const padding = 20;
+  const widthZoomOffsetValue = 50;
+  const heightZoomOffsetValue = (height / width) * widthZoomOffsetValue;
   const [hoveredPoint, setHoveredPoint] = useState<any>(null);
   const [filteredData, setFilteredData] = useState<any>([]);
   const [selectedCategory, setSelectedCategory] = useState(["", ""]);
+  const [mouseOverSvg, setMouseOverSvg] = useState(true);
+  const [widthRange, setWidthRange] = useState([padding, width - padding]);
+  const [heightRange, setHeightRange] = useState([padding, height - padding]);
+  const [xPercent, setXPercent] = useState(0.5);
+  const [yPercent, setYPercent] = useState(0.5);
   const colorMapping: ColorMapping = {};
-  const padding = 20;
-
-  const initialTransform = {
-    scaleX: 1,
-    scaleY: 1,
-    translateX: 0,
-    translateY: 0,
-    skewX: 0,
-    skewY: 0,
-  };
+  const svgRef = useRef<any>(null);
 
   const handlePointHover = (point: any, value: any) => {
     setHoveredPoint({ point: point, value: value });
@@ -93,7 +97,7 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
     const verticalLines: { x1: number; x2: number; y1: number; y2: number }[] =
       [];
     const squareSize = 60;
-    for (let i = 0; i < height / squareSize; i++) {
+    for (let i = 0; i < height / squareSize + 1; i++) {
       horizontalLines.push({
         x1: 0,
         y1: i * squareSize,
@@ -101,7 +105,7 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
         y2: i * squareSize,
       });
     }
-    for (let i = 0; i < width / squareSize; i++) {
+    for (let i = 0; i < width / squareSize + 1; i++) {
       verticalLines.push({
         x1: i * squareSize,
         y1: 0,
@@ -132,61 +136,153 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
   const xScale = useMemo(
     () =>
       scaleLinear({
-        range: [padding, width - padding],
+        range: widthRange,
         domain: [minX, maxX],
-        nice: true,
+        nice: false,
       }),
-    [width, minX, maxX]
+    [widthRange, minX, maxX]
   );
-  const yScale = useMemo(
-    () =>
-      scaleLinear({
-        range: [padding, height - padding],
-        domain: [maxY, minY],
-        nice: true,
-      }),
-    [height, minY, maxY]
-  );
+  const yScale = useMemo(() => {
+    return scaleLinear({
+      range: heightRange,
+      domain: [maxY, minY],
+      nice: false,
+    });
+  }, [minY, maxY, heightRange]);
 
   useEffect(() => {
     if (selectedCategory[0] === "") setFilteredData(data);
     else setFilteredData([data.find((d) => d.name === selectedCategory[0])]);
   }, [data, selectedCategory]);
 
-  const [radius, setRadius] = useState(3);
-  const [multiplier, setMultiplier] = useState(1);
-  useEffect(() => {
-    const handleMouseWheel = (event: any) => {
-      if (event.deltaY < 0) {
-        setMultiplier(
-          (prev) =>
-            prev + Math.abs(event.deltaY) / (Math.abs(event.deltaY) * 10)
-        );
-      } else {
-        setMultiplier(
-          (prev) =>
-            prev - Math.abs(event.deltaY) / (Math.abs(event.deltaY) * 10)
-        );
-      }
+  const handleZoomIn = () => {
+    setWidthRange((prev) => [
+      prev[0] - widthZoomOffsetValue * 0.5,
+      prev[1] + widthZoomOffsetValue * 0.5,
+    ]);
+    setHeightRange((prev) => [
+      prev[0] - heightZoomOffsetValue * 0.5,
+      prev[1] + heightZoomOffsetValue * 0.5,
+    ]);
+  };
 
-      document.getElementById("c")?.setAttribute("r", "3");
-      // Your code to handle mouse wheel event
-      console.log(
-        "Mousewheel event:",
-        event.deltaY,
-        multiplier,
-        document.getElementById("c")
+  const handleZoomOut = () => {
+    if (
+      height -
+        padding +
+        heightZoomOffsetValue * (1 - yPercent) -
+        padding +
+        heightZoomOffsetValue * yPercent >
+      200
+    ) {
+      setWidthRange((prev) => [
+        prev[0] + widthZoomOffsetValue * 0.5,
+        prev[1] - widthZoomOffsetValue * 0.5,
+      ]);
+      setHeightRange((prev) => [
+        prev[0] + heightZoomOffsetValue * 0.5,
+        prev[1] - heightZoomOffsetValue * 0.5,
+      ]);
+    }
+  };
+
+  const handleZoomReset = () => {
+    const svg = svgRef?.current;
+    setWidthRange([padding, width - padding]);
+    setHeightRange([padding, height - padding]);
+    const viewBoxString = `0 0 ${width} ${height}`;
+    svg!.setAttribute("viewBox", viewBoxString);
+  };
+
+  useEffect(() => {
+    const handleZoom = (event: any) => {
+      if (event.deltaY < 0 && mouseOverSvg) {
+        setWidthRange((prev) => [
+          prev[0] - widthZoomOffsetValue * xPercent,
+          prev[1] + widthZoomOffsetValue * (1 - xPercent),
+        ]);
+        setHeightRange((prev) => [
+          prev[0] - heightZoomOffsetValue * yPercent,
+          prev[1] + heightZoomOffsetValue * (1 - yPercent),
+        ]);
+      } else if (
+        event.deltaY > 0 &&
+        height -
+          padding +
+          heightZoomOffsetValue * (1 - yPercent) -
+          padding +
+          heightZoomOffsetValue * yPercent >
+          200 &&
+        mouseOverSvg
+      ) {
+        setWidthRange((prev) => [
+          prev[0] + widthZoomOffsetValue * xPercent,
+          prev[1] - widthZoomOffsetValue * (1 - xPercent),
+        ]);
+        setHeightRange((prev) => [
+          prev[0] + heightZoomOffsetValue * yPercent,
+          prev[1] - heightZoomOffsetValue * (1 - yPercent),
+        ]);
+      }
+    };
+
+    const getPercentage = (event: any) => {
+      const svg = svgRef?.current;
+      const { x, y } = svg.getBoundingClientRect();
+      setXPercent((event.x - x) / width);
+      setYPercent((event.y - y) / height);
+    };
+
+    window.addEventListener("wheel", handleZoom);
+    window.addEventListener("mousemove", getPercentage);
+
+    return () => {
+      window.removeEventListener("wheel", handleZoom);
+      window.removeEventListener("mousemove", getPercentage);
+    };
+  }, [
+    widthZoomOffsetValue,
+    heightZoomOffsetValue,
+    mouseOverSvg,
+    heightRange,
+    widthRange,
+    xPercent,
+    yPercent,
+  ]);
+
+  useEffect(() => {
+    const handleMouse = (event: any) => {
+      const svg = svgRef?.current;
+      const { x, y } = svg.getBoundingClientRect();
+
+      setMouseOverSvg(
+        x < event.x &&
+          event.x - x < width &&
+          y < event.y &&
+          event.y - y < height
       );
     };
 
-    // Adding the event listener
-    window.addEventListener("wheel", handleMouseWheel);
-
-    // Cleaning up the event listener when the component unmounts
+    window.addEventListener("mousemove", handleMouse);
     return () => {
-      window.removeEventListener("wheel", handleMouseWheel);
+      window.removeEventListener("mousemove", handleMouse);
     };
-  }, [multiplier, radius]);
+  }, [mouseOverSvg]);
+
+  const preventScroll = useCallback((e: any) => {
+    e.preventDefault();
+  }, []);
+  useEffect(() => {
+    if (mouseOverSvg) {
+      window.addEventListener("wheel", preventScroll, {
+        passive: false,
+      });
+    } else {
+      window.removeEventListener("wheel", preventScroll);
+    }
+  }, [mouseOverSvg]);
+
+  useSvgPanning({ svg: svgRef.current, width: width, height: height });
 
   return (
     <div className="flex flex-row gap-x-4">
@@ -260,15 +356,12 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
                   <g key={i}>
                     {point.data.map(
                       (dataPoint: [number, number], dataIndex: number) => {
-                        console.log(zoom.toString());
                         return (
                           <circle
-                            transform={"scale(1)"}
                             key={dataIndex}
-                            id="c"
                             cx={xScale(dataPoint[0])}
                             cy={yScale(dataPoint[1])}
-                            r={radius}
+                            r={3}
                             fill={
                               selectedCategory[1] !== ""
                                 ? selectedCategory[1]
@@ -364,7 +457,7 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
                 <hr className="w-full bg-gray-200" />
                 <button
                   type="button"
-                  className="px-2 py-1 hover:bg-gray-200"
+                  className="px-2 py-1 hover:bg-gray-200git a"
                   onClick={zoom.reset}
                 >
                   Reset
