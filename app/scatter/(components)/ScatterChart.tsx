@@ -153,6 +153,41 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
     else setFilteredData([data.find((d) => d.name === selectedCategory[0])]);
   }, [data, selectedCategory]);
 
+  const [radius, setRadius] = useState(3);
+  const [multiplier, setMultiplier] = useState(1);
+  useEffect(() => {
+    const handleMouseWheel = (event: any) => {
+      if (event.deltaY < 0) {
+        setMultiplier(
+          (prev) =>
+            prev + Math.abs(event.deltaY) / (Math.abs(event.deltaY) * 10)
+        );
+      } else {
+        setMultiplier(
+          (prev) =>
+            prev - Math.abs(event.deltaY) / (Math.abs(event.deltaY) * 10)
+        );
+      }
+
+      document.getElementById("c")?.setAttribute("r", "3");
+      // Your code to handle mouse wheel event
+      console.log(
+        "Mousewheel event:",
+        event.deltaY,
+        multiplier,
+        document.getElementById("c")
+      );
+    };
+
+    // Adding the event listener
+    window.addEventListener("wheel", handleMouseWheel);
+
+    // Cleaning up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("wheel", handleMouseWheel);
+    };
+  }, [multiplier, radius]);
+
   return (
     <div className="flex flex-row gap-x-4">
       <Zoom<SVGSVGElement>
@@ -225,12 +260,15 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
                   <g key={i}>
                     {point.data.map(
                       (dataPoint: [number, number], dataIndex: number) => {
+                        console.log(zoom.toString());
                         return (
                           <circle
+                            transform={"scale(1)"}
                             key={dataIndex}
+                            id="c"
                             cx={xScale(dataPoint[0])}
                             cy={yScale(dataPoint[1])}
-                            r={3}
+                            r={radius}
                             fill={
                               selectedCategory[1] !== ""
                                 ? selectedCategory[1]
@@ -326,7 +364,7 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
                 <hr className="w-full bg-gray-200" />
                 <button
                   type="button"
-                  className="px-2 py-1 hover:bg-gray-200git a"
+                  className="px-2 py-1 hover:bg-gray-200"
                   onClick={zoom.reset}
                 >
                   Reset
