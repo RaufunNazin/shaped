@@ -1,10 +1,15 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import { Zoom } from "@visx/zoom";
-import { localPoint } from "@visx/event";
-import { RectClipPath } from "@visx/clip-path";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import moment, { Moment } from "moment";
 import { scaleLinear } from "@visx/scale";
+import useSvgPanning from "@/hooks/use-svg-panning";
 
 interface EmbeddingChartProps {
   data: { name: string | number; data: [number, number][] }[];
@@ -19,20 +24,19 @@ interface ColorMapping {
 const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
   const width = 960;
   const height = 600;
+  const padding = 20;
+  const widthZoomOffsetValue = 50;
+  const heightZoomOffsetValue = (height / width) * widthZoomOffsetValue;
   const [hoveredPoint, setHoveredPoint] = useState<any>(null);
   const [filteredData, setFilteredData] = useState<any>([]);
   const [selectedCategory, setSelectedCategory] = useState(["", ""]);
+  const [mouseOverSvg, setMouseOverSvg] = useState(true);
+  const [widthRange, setWidthRange] = useState([padding, width - padding]);
+  const [heightRange, setHeightRange] = useState([padding, height - padding]);
+  const [xPercent, setXPercent] = useState(0.5);
+  const [yPercent, setYPercent] = useState(0.5);
   const colorMapping: ColorMapping = {};
-  const padding = 20;
-
-  const initialTransform = {
-    scaleX: 1,
-    scaleY: 1,
-    translateX: 0,
-    translateY: 0,
-    skewX: 0,
-    skewY: 0,
-  };
+  const svgRef = useRef<any>(null);
 
   const handlePointHover = (point: any, value: any) => {
     setHoveredPoint({ point: point, value: value });
@@ -93,7 +97,7 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
     const verticalLines: { x1: number; x2: number; y1: number; y2: number }[] =
       [];
     const squareSize = 60;
-    for (let i = 0; i < height / squareSize; i++) {
+    for (let i = 0; i < height / squareSize + 1; i++) {
       horizontalLines.push({
         x1: 0,
         y1: i * squareSize,
@@ -101,7 +105,7 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
         y2: i * squareSize,
       });
     }
-    for (let i = 0; i < width / squareSize; i++) {
+    for (let i = 0; i < width / squareSize + 1; i++) {
       verticalLines.push({
         x1: i * squareSize,
         y1: 0,
@@ -132,243 +136,344 @@ const ScatterChart = ({ data, dataType, colors }: EmbeddingChartProps) => {
   const xScale = useMemo(
     () =>
       scaleLinear({
-        range: [padding, width - padding],
+        range: widthRange,
         domain: [minX, maxX],
-        nice: true,
+        nice: false,
       }),
-    [width, minX, maxX]
+    [widthRange, minX, maxX]
   );
-  const yScale = useMemo(
-    () =>
-      scaleLinear({
-        range: [padding, height - padding],
-        domain: [maxY, minY],
-        nice: true,
-      }),
-    [height, minY, maxY]
-  );
+  const yScale = useMemo(() => {
+    return scaleLinear({
+      range: heightRange,
+      domain: [maxY, minY],
+      nice: false,
+    });
+  }, [minY, maxY, heightRange]);
 
   useEffect(() => {
     if (selectedCategory[0] === "") setFilteredData(data);
     else setFilteredData([data.find((d) => d.name === selectedCategory[0])]);
   }, [data, selectedCategory]);
 
-  return (
-    <div className="flex flex-row gap-x-4">
-      <Zoom<SVGSVGElement>
-        width={width}
-        height={height}
-        scaleXMin={1 / 4}
-        scaleXMax={4}
-        scaleYMin={1 / 4}
-        scaleYMax={4}
-        initialTransformMatrix={initialTransform}
-      >
-        {(zoom) => (
-          <div className="relative">
-            <svg
-              width={width}
-              height={height}
-              style={{
-                touchAction: "none",
-                border: "1px solid lightgray",
-                borderRadius: "4px",
-              }}
-              ref={zoom.containerRef}
-            >
-              <RectClipPath id="zoom-clip" width={width} height={height} />
-              <rect width={width} height={height} rx={14} fill="none" />
+  const handleZoomIn = () => {
+    setWidthRange((prev) => [
+      prev[0] - widthZoomOffsetValue * 0.5,
+      prev[1] + widthZoomOffsetValue * 0.5,
+    ]);
+    setHeightRange((prev) => [
+      prev[0] - heightZoomOffsetValue * 0.5,
+      prev[1] + heightZoomOffsetValue * 0.5,
+    ]);
+  };
 
-              <rect
-                width={width}
-                height={height}
-                rx={14}
-                fill="transparent"
-                onMouseLeave={() => {
-                  if (zoom.isDragging) zoom.dragEnd();
-                }}
-                onTouchStart={zoom.dragStart}
-                onTouchMove={zoom.dragMove}
-                onTouchEnd={zoom.dragEnd}
-                onMouseDown={zoom.dragStart}
-                onMouseMove={zoom.dragMove}
-                onMouseUp={zoom.dragEnd}
-                onDoubleClick={(event) => {
-                  const point = localPoint(event) || { x: 0, y: 0 };
-                  zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
-                }}
-              />
-              {horizontalLines.map((point, i) => {
-                return (
-                  <line
-                    key={i}
-                    {...point}
-                    strokeWidth={1}
-                    stroke="#000000"
-                    strokeOpacity={0.1}
-                  />
-                );
-              })}
-              {verticalLines.map((point, i) => {
-                return (
-                  <line
-                    key={i}
-                    {...point}
-                    strokeWidth={1}
-                    stroke="#000000"
-                    strokeOpacity={0.1}
-                  />
-                );
-              })}
-              <g transform={zoom.toString()}>
-                {filteredData.map((point: any, i: number) => (
-                  <g key={i}>
-                    {point.data.map(
-                      (dataPoint: [number, number], dataIndex: number) => {
-                        return (
-                          <circle
-                            key={dataIndex}
-                            cx={xScale(dataPoint[0])}
-                            cy={yScale(dataPoint[1])}
-                            r={3}
-                            fill={
-                              selectedCategory[1] !== ""
-                                ? selectedCategory[1]
-                                : ["Numerical", "Timestamp"].includes(dataType)
-                                ? getColor(point.name)
-                                : getColorByCategory(point.name)
-                            }
-                            fillOpacity={0.6}
-                            strokeWidth={1}
-                            stroke={
-                              selectedCategory[1] !== ""
-                                ? selectedCategory[1]
-                                : ["Numerical", "Timestamp"].includes(dataType)
-                                ? getColor(point.name)
-                                : getColorByCategory(point.name)
-                            }
-                            onMouseEnter={() => {
-                              handlePointHover(
-                                point.data[dataIndex],
-                                point.name
-                              );
-                            }}
-                            onMouseLeave={() => setHoveredPoint(null)}
-                          />
-                        );
-                      }
-                    )}
-                  </g>
-                ))}
-              </g>
-              {hoveredPoint && (
-                <foreignObject
-                  x={
-                    xScale(hoveredPoint.point[0]) + 350 > width - padding
-                      ? Math.max(0, width - 350)
-                      : xScale(hoveredPoint.point[0]) + 10
-                  }
-                  y={
-                    yScale(hoveredPoint.point[1]) - 70 < 0
-                      ? 10
-                      : yScale(hoveredPoint.point[1]) - 70
-                  }
-                  width="340"
-                  height="60"
-                >
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      padding: "10px",
-                      background: "white",
-                      border: "1px solid lightgray",
-                      borderRadius: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
-                      Attribute value:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {hoveredPoint.value}
-                      </span>
-                    </div>
-                    <div>
-                      Embedding:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {hoveredPoint.point[0]}, {hoveredPoint.point[1]}
-                      </span>
-                    </div>
-                  </div>
-                </foreignObject>
-              )}
-            </svg>
-            <div className="absolute right-3 top-3 flex flex-col items-center">
-              <div className="flex flex-col items-center rounded-md border bg-white border-gray-200 shadow-md">
-                <button
-                  type="button"
-                  className="px-2 py-1 hover:bg-gray-200"
-                  onClick={() => zoom.scale({ scaleX: 1.2, scaleY: 1.2 })}
-                >
-                  +
-                </button>
-                <hr className="w-full bg-gray-200" />
-                <button
-                  type="button"
-                  className="px-2 py-1"
-                  onClick={() => zoom.scale({ scaleX: 0.8, scaleY: 0.8 })}
-                >
-                  -
-                </button>{" "}
-                <hr className="w-full bg-gray-200" />
-                <button
-                  type="button"
-                  className="px-2 py-1 hover:bg-gray-200git a"
-                  onClick={zoom.reset}
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Zoom>
-      <div className="flex flex-col gap-y-2">
-        {!["Numerical", "Timestamp"].includes(dataType) &&
-          data.length <= 20 && (
-            <div className="text-left text-[15px] font-bold">Legend</div>
-          )}
-        {!["Numerical", "Timestamp"].includes(dataType) &&
-          data.length <= 20 &&
-          data.map((category: any) => (
-            <div key={category.name} className="text-left">
-              <button
-                onClick={() => {
-                  if (selectedCategory[0] !== "") setSelectedCategory(["", ""]);
-                  else
-                    setSelectedCategory([
-                      category.name,
-                      categoriesColor(category.name),
-                    ]);
-                }}
+  const handleZoomOut = () => {
+    if (
+      height -
+        padding +
+        heightZoomOffsetValue * (1 - yPercent) -
+        padding +
+        heightZoomOffsetValue * yPercent >
+      200
+    ) {
+      setWidthRange((prev) => [
+        prev[0] + widthZoomOffsetValue * 0.5,
+        prev[1] - widthZoomOffsetValue * 0.5,
+      ]);
+      setHeightRange((prev) => [
+        prev[0] + heightZoomOffsetValue * 0.5,
+        prev[1] - heightZoomOffsetValue * 0.5,
+      ]);
+    }
+  };
+
+  const handleZoomReset = () => {
+    const svg = svgRef?.current;
+    setWidthRange([padding, width - padding]);
+    setHeightRange([padding, height - padding]);
+    const viewBoxString = `0 0 ${width} ${height}`;
+    svg!.setAttribute("viewBox", viewBoxString);
+  };
+
+  useEffect(() => {
+    const handleZoom = (event: any) => {
+      if (event.deltaY < 0 && mouseOverSvg) {
+        setWidthRange((prev) => [
+          prev[0] - widthZoomOffsetValue * xPercent,
+          prev[1] + widthZoomOffsetValue * (1 - xPercent),
+        ]);
+        setHeightRange((prev) => [
+          prev[0] - heightZoomOffsetValue * yPercent,
+          prev[1] + heightZoomOffsetValue * (1 - yPercent),
+        ]);
+      } else if (
+        event.deltaY > 0 &&
+        height -
+          padding +
+          heightZoomOffsetValue * (1 - yPercent) -
+          padding +
+          heightZoomOffsetValue * yPercent >
+          200 &&
+        mouseOverSvg
+      ) {
+        setWidthRange((prev) => [
+          prev[0] + widthZoomOffsetValue * xPercent,
+          prev[1] - widthZoomOffsetValue * (1 - xPercent),
+        ]);
+        setHeightRange((prev) => [
+          prev[0] + heightZoomOffsetValue * yPercent,
+          prev[1] - heightZoomOffsetValue * (1 - yPercent),
+        ]);
+      }
+    };
+
+    const getPercentage = (event: any) => {
+      const svg = svgRef?.current;
+      const { x, y } = svg.getBoundingClientRect();
+      setXPercent((event.x - x) / width);
+      setYPercent((event.y - y) / height);
+    };
+
+    window.addEventListener("wheel", handleZoom);
+    window.addEventListener("mousemove", getPercentage);
+
+    return () => {
+      window.removeEventListener("wheel", handleZoom);
+      window.removeEventListener("mousemove", getPercentage);
+    };
+  }, [
+    widthZoomOffsetValue,
+    heightZoomOffsetValue,
+    mouseOverSvg,
+    heightRange,
+    widthRange,
+    xPercent,
+    yPercent,
+  ]);
+
+  useEffect(() => {
+    const handleMouse = (event: any) => {
+      const svg = svgRef?.current;
+      const { x, y } = svg.getBoundingClientRect();
+
+      setMouseOverSvg(
+        x < event.x &&
+          event.x - x < width &&
+          y < event.y &&
+          event.y - y < height
+      );
+    };
+
+    window.addEventListener("mousemove", handleMouse);
+    return () => {
+      window.removeEventListener("mousemove", handleMouse);
+    };
+  }, [mouseOverSvg]);
+
+  const preventScroll = useCallback((e: any) => {
+    e.preventDefault();
+  }, []);
+  useEffect(() => {
+    if (mouseOverSvg) {
+      window.addEventListener("wheel", preventScroll, {
+        passive: false,
+      });
+    } else {
+      window.removeEventListener("wheel", preventScroll);
+    }
+  }, [mouseOverSvg]);
+
+  useSvgPanning({ svg: svgRef.current, width: width, height: height });
+
+  return (
+    <div>
+      <div className="flex flex-row gap-x-4">
+        <div className="relative">
+          <svg width={width} height={height} fill="none">
+            {horizontalLines.map((point, i) => {
+              return (
+                <line
+                  key={i}
+                  {...point}
+                  strokeWidth={1}
+                  stroke="#000000"
+                  strokeOpacity={0.1}
+                />
+              );
+            })}
+            {verticalLines.map((point, i) => {
+              return (
+                <line
+                  key={i}
+                  {...point}
+                  strokeWidth={1}
+                  stroke="#000000"
+                  strokeOpacity={0.1}
+                />
+              );
+            })}
+          </svg>
+          <svg
+            width={width}
+            height={height}
+            style={{
+              touchAction: "none",
+              border: "1px solid lightgray",
+              position: "absolute",
+              top: 0,
+              left: 0,
+            }}
+            fill="none"
+            ref={svgRef}
+          >
+            <rect width={width} height={height} rx={14} fill="none" />
+
+            <g>
+              {filteredData.map((point: any, i: number) => (
+                <g key={i}>
+                  {point.data.map(
+                    (dataPoint: [number, number], dataIndex: number) => {
+                      return (
+                        <circle
+                          key={dataIndex}
+                          cx={xScale(dataPoint[0])}
+                          cy={yScale(dataPoint[1])}
+                          r={3}
+                          fill={
+                            selectedCategory[1] !== ""
+                              ? selectedCategory[1]
+                              : ["Numerical", "Timestamp"].includes(dataType)
+                              ? getColor(point.name)
+                              : getColorByCategory(point.name)
+                          }
+                          fillOpacity={0.6}
+                          strokeWidth={1}
+                          stroke={
+                            selectedCategory[1] !== ""
+                              ? selectedCategory[1]
+                              : ["Numerical", "Timestamp"].includes(dataType)
+                              ? getColor(point.name)
+                              : getColorByCategory(point.name)
+                          }
+                          onMouseEnter={() => {
+                            handlePointHover(point.data[dataIndex], point.name);
+                          }}
+                          onMouseLeave={() => setHoveredPoint(null)}
+                        />
+                      );
+                    }
+                  )}
+                </g>
+              ))}
+            </g>
+            {hoveredPoint && (
+              <foreignObject
+                x={
+                  xScale(hoveredPoint.point[0]) + 350 > width - padding
+                    ? Math.max(0, width - 350)
+                    : xScale(hoveredPoint.point[0]) + 10
+                }
+                y={
+                  yScale(hoveredPoint.point[1]) - 70 < 0
+                    ? 10
+                    : yScale(hoveredPoint.point[1]) - 70
+                }
+                width="340"
+                height="60"
               >
-                <div className="flex items-center">
-                  <div
-                    className="mr-2 h-3 w-3 rounded-full"
-                    style={{
-                      backgroundColor: categoriesColor(category.name),
-                      opacity: 0.8,
-                    }}
-                  ></div>
-                  <div className="text-sm">{category.name}</div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    padding: "10px",
+                    background: "white",
+                    border: "1px solid lightgray",
+                    borderRadius: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    Attribute value:{" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      {hoveredPoint.value}
+                    </span>
+                  </div>
+                  <div>
+                    Embedding:{" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      {hoveredPoint.point[0]}, {hoveredPoint.point[1]}
+                    </span>
+                  </div>
                 </div>
+              </foreignObject>
+            )}
+          </svg>
+          <div className="absolute right-3 top-3 flex flex-col items-center">
+            <div className="flex flex-col items-center rounded-md border bg-white border-gray-200 shadow-md">
+              <button
+                type="button"
+                className="px-2 py-1"
+                onClick={handleZoomIn}
+              >
+                +
+              </button>
+              <hr className="w-full bg-gray-200" />
+              <button
+                type="button"
+                className="px-2 py-1"
+                onClick={handleZoomOut}
+              >
+                -
+              </button>
+              <hr className="w-full bg-gray-200" />
+              <button
+                type="button"
+                className="px-2 py-1"
+                onClick={handleZoomReset}
+              >
+                Reset
               </button>
             </div>
-          ))}
-      </div>{" "}
+          </div>
+        </div>
+        <div className="flex flex-col gap-y-2">
+          {!["Numerical", "Timestamp"].includes(dataType) &&
+            data.length <= 20 && (
+              <div className="text-left text-[15px] font-bold">Legend</div>
+            )}
+          {!["Numerical", "Timestamp"].includes(dataType) &&
+            data.length <= 20 &&
+            data.map((category: any) => (
+              <div key={category.name} className="text-left">
+                <button
+                  onClick={() => {
+                    if (selectedCategory[0] !== "")
+                      setSelectedCategory(["", ""]);
+                    else
+                      setSelectedCategory([
+                        category.name,
+                        categoriesColor(category.name),
+                      ]);
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div
+                      className="mr-2 h-3 w-3 rounded-full"
+                      style={{
+                        backgroundColor: categoriesColor(category.name),
+                        opacity: 0.8,
+                      }}
+                    ></div>
+                    <div className="text-sm">{category.name}</div>
+                  </div>
+                </button>
+              </div>
+            ))}
+        </div>
+      </div>
+      <div className="min-h-screen bg-cyan-200"></div>
     </div>
   );
 };
