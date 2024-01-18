@@ -41,6 +41,7 @@
     "react": "^18",
     "react-apexcharts": "^1.4.1",
     "react-chartjs-2": "^5.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-icons": "^4.11.0",
     "react-plotly.js": "^2.6.0",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-color": "^3.0.11",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
     "eslint": "^8",
