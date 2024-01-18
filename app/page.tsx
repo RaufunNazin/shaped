@@ -25,6 +25,7 @@ import AreaChart from "@/components/graphs/area-chart";
 import InteractionAreachart from "@/components/interaction-area-chart";
 import moment from "moment";
 import InteractionLineChart from "@/components/interaction-line-chart";
+import SelectorLight from "@/components/ui/selector-light";
 
 const Page = () => {
   const LightBulb = Icons["lightBulb"];
@@ -1005,20 +1006,20 @@ const Page = () => {
                   onValueChange={(value: string) => {
                     setUser(value);
                   }}
-                  className="rounded-l-xl border-2 border-r-0 p-2"
+                  className="rounded-l-xl border-2 border-r-0"
                 />
                 {user === "Power user" ? (
-                  <Selector
+                  <SelectorLight
                     placeholder={userId}
                     items={[
                       "4cb908bf-0ba5-4a7c-af4b-7954f49c9e72",
                       "4cb908bf-0ba5-4a7c-af4b-7954f4956465h56h",
                       "hdfsuw87f-0ba5-4a7c-af4b-7954f49c9e72",
                     ]}
-                    onValueChange={(value: string) => {
+                    onValueChange={(value) => {
                       setUserId(value);
                     }}
-                    className="w-[450px] rounded-r-xl border-2 p-2"
+                    className="w-[450px] rounded-r-xl border-2"
                   />
                 ) : user === "Cold-start user" ? (
                   <Selector
